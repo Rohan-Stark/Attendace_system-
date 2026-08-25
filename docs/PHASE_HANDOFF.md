@@ -3,7 +3,7 @@
 ## Current Project State
 
 - **Project:** SmartAttend
-- **Current Phase:** Phase 9 — Attendance Reports & Export
+- **Current Phase:** Phase 10 — Advanced Security & Reliability
 - **Phase Status:** VERIFIED COMPLETE
 - **Last Updated:** 2026-08-25
 
@@ -22,64 +22,56 @@
 | Phase 7 — Attendance Session & Processing | VERIFIED COMPLETE |
 | Phase 8 — Attendance Analytics & Reporting | VERIFIED COMPLETE |
 | Phase 9 — Attendance Reports & Export | VERIFIED COMPLETE |
+| Phase 10 — Advanced Security & Reliability | VERIFIED COMPLETE |
 
 **Note:** Phase 6 face recognition is functional but the real-world 70–80 student / 90–95% accuracy target has not been validated in production conditions.
 
 ---
 
-## Phase 9 — Current Implementation
+## Phase 10 — Current Implementation
 
 ### Completed Work
 
-**Backend:**
-- Added `fpdf2` dependency for lightweight PDF generation.
-- `backend/app/services/report_service.py` — Formats analytics dict payloads into CSV strings and PDF bytes (`fpdf2`).
-- `backend/app/api/reports.py` — API router wrapping the analytics data fetching to output CSV/PDF directly to the user with Content-Disposition headers.
-- `backend/app/main.py` — Registered `/reports` router.
-- `backend/tests/test_reports.py` — Exhaustive unit tests asserting data scoping, filtering, valid CSV generation, and valid PDF signatures.
-
-**Frontend:**
-- `frontend/src/services/report.service.ts` — API client handling `Blob` responses and `URL.createObjectURL` downloads.
-- `frontend/src/index.css` — Print layout overrides using `@media print` utilities (hide sidebars, headers).
-- `frontend/src/layouts/DashboardLayout.tsx` — Applied CSS classes to allow proper sidebar/header hiding during printing.
-- `frontend/src/pages/admin/AdminAnalytics.tsx` — Action bar added (CSV/PDF/Print).
-- `frontend/src/pages/hod/HodAnalytics.tsx` — Action bar added (CSV/PDF/Print).
-- `frontend/src/pages/teacher/TeacherAnalytics.tsx` — Action bar added (CSV/PDF/Print).
-- `frontend/src/pages/student/StudentAttendance.tsx` — Action bar added (CSV/PDF/Print).
+**Security & Reliability Hardening:**
+- **Rate Limiting:** Implemented an in-memory rate limiter applied to sensitive endpoints (`/auth/login`, `/auth/forgot-password`, `/auth/reset-password`, face endpoints).
+- **Security Headers:** Added `X-Content-Type-Options`, `X-Frame-Options`, `Content-Security-Policy`, and `X-XSS-Protection` via custom middleware.
+- **Error Handling:** Added a global exception handler (`500`) to sanitize internal errors, prevent stack trace leakage, and ensure database rollback.
+- **Biometric Security:** Enhanced `validate_image` in `face.py` to verify actual image decoding using `cv2.imdecode` instead of relying solely on MIME types. Also enforced max file sizes.
+- **Request Validation:** Hardened Pydantic schemas (`auth.py`, `student.py`, `hod.py`, `teacher.py`, `attendance.py`) with strict `Field` constraints (e.g., `max_length`, `pattern`, `ge`).
+- **Health Endpoint:** Added a `/health` endpoint to verify service readiness without exposing credentials.
+- **Test Infrastructure:** Added `conftest.py` autouse fixture to reset rate limiter state across tests to prevent cross-test contamination.
+- **Security Test Suite:** Created a comprehensive `test_security.py` covering IDOR, authentication leakage, reset tokens, rate limiting, and biometric validation.
 
 ### Missing Work
 
-None — all Phase 9 requirements have been fully implemented.
+None — all Phase 10 requirements have been fully implemented.
 
 ---
 
-## Files Changed (Phase 9)
+## Files Changed (Phase 10)
 
 ### New Files
 | File | Description |
 |------|-------------|
-| `backend/app/services/report_service.py` | CSV/PDF formatting service |
-| `backend/app/api/reports.py` | Reporting endpoints (download CSV/PDF) |
-| `backend/tests/test_reports.py` | Comprehensive test suite for reporting |
-| `frontend/src/services/report.service.ts` | Frontend API client for report downloads |
+| `backend/app/core/rate_limit.py` | In-memory rate limiter implementation |
+| `backend/tests/test_security.py` | Comprehensive test suite for security requirements |
 
 ### Modified Files
 | File | Change |
 |------|--------|
-| `backend/requirements.txt` | Added `fpdf2` |
-| `backend/app/main.py` | Registered `reports` router |
-| `frontend/src/index.css` | Added `@media print` rules |
-| `frontend/src/layouts/DashboardLayout.tsx` | Annotated layout components with print classes |
-| `frontend/src/pages/admin/AdminAnalytics.tsx` | Added export/print action bar |
-| `frontend/src/pages/hod/HodAnalytics.tsx` | Added export/print action bar |
-| `frontend/src/pages/teacher/TeacherAnalytics.tsx` | Added export/print action bar |
-| `frontend/src/pages/student/StudentAttendance.tsx` | Added export/print action bar |
+| `backend/app/main.py` | Security headers middleware, global error handler, health endpoint |
+| `backend/app/api/auth.py` | Applied rate limits to auth flows |
+| `backend/app/api/face.py` | Enhanced image validation (decode), applied rate limits |
+| `backend/app/schemas/*.py` | Added strict `Field` constraints across schemas |
+| `backend/app/services/face_service.py` | Lazy model initialization optimization |
+| `backend/app/models/attendance.py` | Removed redundant snapshot columns |
+| `backend/tests/conftest.py` | Added fixture to reset rate limiters |
 
 ---
 
 ## Database
 
-- **Migrations created in Phase 9:** None (Reporting uses existing models/attendance logic).
+- **Migrations created in Phase 10:** None (No schema changes required).
 - **Database-dependent verification:** Verified against PostgreSQL (`smartattend-db`).
 
 ---
@@ -89,39 +81,22 @@ None — all Phase 9 requirements have been fully implemented.
 | Test | Status |
 |------|--------|
 | `npm run build` (frontend) | ✅ PASSED — 0 TypeScript errors |
-| `pytest tests/` (backend) | ✅ PASSED — 59 passed, 0 failed in ~52 seconds |
+| `pytest tests/` (backend) | ✅ PASSED — 97 passed, 145 warnings in ~217 seconds |
 
 **Tests actually executed. No test results have been fabricated.**
 
 ---
 
-## Phase 9 Architecture
-
-### Endpoints
-| Endpoint | Formats | Filters | Scope |
-|----------|---------|---------|-------|
-| `/reports/student` | `/csv`, `/pdf` | None (JWT ID) | Own attendance |
-| `/reports/teacher` | `/csv`, `/pdf` | `from_date`, `to_date` | Own sessions |
-| `/reports/hod` | `/csv`, `/pdf` | `from_date`, `to_date` | Own department |
-| `/reports/admin` | `/csv`, `/pdf` | `from_date`, `to_date` | System-wide |
-
-### Calculations and Consistency
-By strictly wrapping `analytics_service` logic within `report_service`:
-- The numbers generated in the PDF/CSV perfectly match the UI dashboard percentages.
-- Historical context (like past semesters and teachers) remains preserved via Session linkages, avoiding contamination from student transfers.
-
----
-
 ## Known Issues
 
-- None.
+- **Rate Limiter Limitation:** The `RateLimiter` is strictly in-memory. It is suitable for the current single-instance deployment/demo but is **not** synchronized across multiple workers or horizontally scaled instances.
 
 ---
 
 ## Do NOT Redo
 
-- Phase 1–8 implementations
-- Phase 9 reporting infrastructure
+- Phase 1–9 implementations
+- Phase 10 security hardening infrastructure
 
 ---
 
@@ -129,5 +104,5 @@ By strictly wrapping `analytics_service` logic within `report_service`:
 
 1. Read this document
 2. Inspect the current repository
-3. Phase 9 is complete — do NOT restart it
-4. Do NOT begin Phase 10 without explicit approval
+3. Phase 10 is complete — do NOT restart it
+4. Do NOT begin Phase 11 without explicit approval
