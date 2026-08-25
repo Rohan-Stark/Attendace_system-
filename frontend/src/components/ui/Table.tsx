@@ -30,9 +30,9 @@ export function Th({ children, className = '' }: { children: React.ReactNode; cl
   );
 }
 
-export function Td({ children, className = '' }: { children: React.ReactNode; className?: string }) {
+export function Td({ children, className = '', ...props }: { children: React.ReactNode; className?: string } & React.TdHTMLAttributes<HTMLTableCellElement>) {
   return (
-    <td className={`px-6 py-4 whitespace-nowrap text-sm text-slate-700 ${className}`}>
+    <td className={`px-6 py-4 whitespace-nowrap text-sm text-slate-700 ${className}`} {...props}>
       {children}
     </td>
   );

@@ -17,16 +17,19 @@ import { UnauthorizedPage } from './pages/UnauthorizedPage';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { DepartmentList } from './pages/admin/DepartmentList';
 import { HodList } from './pages/admin/HodList';
+import { AdminAnalytics } from './pages/admin/AdminAnalytics';
 
 // HOD Pages
 import { HodDashboard } from './pages/hod/HodDashboard';
 import { TeacherList } from './pages/hod/TeacherList';
 import { StudentList } from './pages/hod/StudentList';
+import { HodAnalytics } from './pages/hod/HodAnalytics';
 
 // Portals
 import { TeacherDashboard } from './pages/teacher/TeacherDashboard';
 import { AttendancePortal } from './pages/teacher/AttendancePortal';
 import { AttendanceSession } from './pages/teacher/AttendanceSession';
+import { TeacherAnalytics } from './pages/teacher/TeacherAnalytics';
 import { StudentDashboard } from './pages/student/StudentDashboard';
 import { StudentAttendance } from './pages/student/StudentAttendance';
 import { FaceRegistration } from './pages/student/FaceRegistration';
@@ -58,6 +61,7 @@ function App() {
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/departments" element={<DepartmentList />} />
               <Route path="/admin/hods" element={<HodList />} />
+              <Route path="/admin/analytics" element={<AdminAnalytics />} />
               <Route path="/admin/test-face" element={<FaceRecognitionTest />} />
             </Route>
           </Route>
@@ -68,6 +72,7 @@ function App() {
               <Route path="/hod" element={<HodDashboard />} />
               <Route path="/hod/teachers" element={<TeacherList />} />
               <Route path="/hod/students" element={<StudentList />} />
+              <Route path="/hod/analytics" element={<HodAnalytics />} />
             </Route>
           </Route>
 
@@ -77,6 +82,7 @@ function App() {
               <Route path="/teacher" element={<TeacherDashboard />} />
               <Route path="/teacher/attendance" element={<AttendancePortal />} />
               <Route path="/teacher/attendance/:sessionId" element={<AttendanceSession />} />
+              <Route path="/teacher/analytics" element={<TeacherAnalytics />} />
             </Route>
           </Route>
 

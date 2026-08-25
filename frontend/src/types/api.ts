@@ -229,3 +229,85 @@ export interface RecognizeFrameResponse {
   unknown_count: number;
   error?: string;
 }
+
+// Analytics Interfaces
+
+export interface StudentAttendanceStats {
+  student_id: number;
+  usn: string;
+  name: string;
+  total_classes: number;
+  present_count: number;
+  absent_count: number;
+  attendance_percentage: number;
+}
+
+export interface TrendData {
+  date: string;
+  present_count: number;
+  absent_count: number;
+}
+
+export interface StudentTrendData {
+  date: string;
+  status: string;
+  session_id: number;
+}
+
+export interface StudentAnalyticsResponse {
+  total_classes: number;
+  present_count: number;
+  absent_count: number;
+  attendance_percentage: number;
+  history: StudentTrendData[];
+}
+
+export interface TeacherAnalyticsResponse {
+  total_sessions: number;
+  total_records: number;
+  present_count: number;
+  absent_count: number;
+  attendance_percentage: number;
+  student_stats: StudentAttendanceStats[];
+  trend: TrendData[];
+}
+
+export interface SectionStats {
+  semester: number;
+  section: string;
+  total_classes: number;
+  present_count: number;
+  absent_count: number;
+  attendance_percentage: number;
+}
+
+export interface HodAnalyticsResponse {
+  total_sessions: number;
+  total_records: number;
+  present_count: number;
+  absent_count: number;
+  attendance_percentage: number;
+  section_stats: SectionStats[];
+  student_stats: StudentAttendanceStats[];
+  trend: TrendData[];
+}
+
+export interface DepartmentStats {
+  department_id: number;
+  department_name: string;
+  total_sessions: number;
+  present_count: number;
+  absent_count: number;
+  attendance_percentage: number;
+}
+
+export interface AdminAnalyticsResponse {
+  total_departments_active: number;
+  total_sessions: number;
+  total_records: number;
+  present_count: number;
+  absent_count: number;
+  attendance_percentage: number;
+  department_stats: DepartmentStats[];
+  trend: TrendData[];
+}

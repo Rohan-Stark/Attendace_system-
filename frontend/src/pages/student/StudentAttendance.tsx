@@ -4,20 +4,20 @@ import { Badge } from '../../components/ui/Badge';
 import { Table, Thead, Tbody, Tr, Th, Td } from '../../components/ui/Table';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { ErrorMessage } from '../../components/ui/ErrorMessage';
-import { getStudentAttendance } from '../../services/attendance.service';
-import type { StudentAttendanceRecord } from '../../types/api';
-import { CalendarDays, CheckCircle2, XCircle, ScanFace, BarChart3 } from 'lucide-react';
+import { analyticsService } from '../../services/analytics.service';
+import type { StudentAnalyticsResponse } from '../../types/api';
+import { CalendarDays, CheckCircle2, XCircle, BarChart3 } from 'lucide-react';
 
 export function StudentAttendance() {
-  const [records, setRecords] = useState<StudentAttendanceRecord[]>([]);
+  const [analytics, setAnalytics] = useState<StudentAnalyticsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
     const load = async () => {
       try {
-        const data = await getStudentAttendance();
-        setRecords(data);
+        const data = await analyticsService.getStudentAnalytics();
+        setAnalytics(data);
         setError('');
       } catch (err: unknown) {
         const message = err instanceof Error ? err.message : 'Failed to load attendance';
@@ -29,9 +29,10 @@ export function StudentAttendance() {
     load();
   }, []);
 
-  const presentCount = records.filter((r) => r.status === 'present').length;
-  const totalCount = records.length;
-  const percentage = totalCount > 0 ? ((presentCount / totalCount) * 100).toFixed(1) : '—';
+  const presentCount = analytics?.present_count ?? 0;
+  const totalCount = analytics?.total_classes ?? 0;
+  const percentage = analytics?.attendance_percentage ?? 0;
+  const records = analytics?.history ?? [];
 
   return (
     <div className="space-y-6">
@@ -138,15 +139,7 @@ export function StudentAttendance() {
                           </Badge>
                         </Td>
                         <Td>
-                          <Badge variant={record.marking_method === 'face_recognition' ? 'info' : 'default'}>
-                            {record.marking_method === 'face_recognition' ? (
-                              <span className="flex items-center gap-1">
-                                <ScanFace className="w-3 h-3" /> Face Recognition
-                              </span>
-                            ) : (
-                              'Manual'
-                            )}
-                          </Badge>
+                          —
                         </Td>
                       </Tr>
                     ))}

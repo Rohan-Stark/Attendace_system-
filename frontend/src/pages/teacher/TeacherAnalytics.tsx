@@ -1,0 +1,185 @@
+import { useEffect, useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/Card';
+import { Table, Thead, Tbody, Tr, Th, Td } from '../../components/ui/Table';
+import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
+import { ErrorMessage } from '../../components/ui/ErrorMessage';
+import { Button } from '../../components/ui/Button';
+import { analyticsService } from '../../services/analytics.service';
+import type { TeacherAnalyticsResponse } from '../../types/api';
+import { BarChart3, Users, CheckCircle2, XCircle, CalendarDays, Filter } from 'lucide-react';
+
+export function TeacherAnalytics() {
+  const [analytics, setAnalytics] = useState<TeacherAnalyticsResponse | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  
+  const [fromDate, setFromDate] = useState('');
+  const [toDate, setToDate] = useState('');
+
+  const loadData = async () => {
+    setLoading(true);
+    try {
+      const data = await analyticsService.getTeacherAnalytics(
+        fromDate || undefined, 
+        toDate || undefined
+      );
+      setAnalytics(data);
+      setError('');
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to load teacher analytics';
+      setError(message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadData();
+  }, []);
+
+  const handleFilter = (e: React.FormEvent) => {
+    e.preventDefault();
+    loadData();
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+            <BarChart3 className="w-7 h-7 text-indigo-600" />
+            Class Analytics
+          </h1>
+          <p className="text-slate-500 mt-1">Attendance statistics for your classes</p>
+        </div>
+        
+        <form onSubmit={handleFilter} className="flex items-end gap-2 bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+          <div>
+            <label className="block text-xs font-medium text-slate-700 mb-1">From Date</label>
+            <input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)}
+              className="h-9 text-sm px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <div>
+            <label className="block text-xs font-medium text-slate-700 mb-1">To Date</label>
+            <input type="date" value={toDate} onChange={e => setToDate(e.target.value)}
+              className="h-9 text-sm px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+          </div>
+          <Button type="submit" size="sm" className="h-9 flex items-center gap-2">
+            <Filter className="w-4 h-4" /> Filter
+          </Button>
+        </form>
+      </div>
+
+      {error && <ErrorMessage message={error} />}
+
+      {loading ? (
+        <LoadingSpinner text="Loading analytics..." />
+      ) : analytics ? (
+        <>
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
+            <Card>
+              <CardContent className="p-5 flex flex-col justify-center h-full">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-blue-100 rounded-lg"><CalendarDays className="w-5 h-5 text-blue-600" /></div>
+                  <div>
+                    <p className="text-2xl font-bold text-slate-900">{analytics.total_sessions}</p>
+                    <p className="text-xs text-slate-500 font-medium">Sessions</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-5 flex flex-col justify-center h-full">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-slate-100 rounded-lg"><Users className="w-5 h-5 text-slate-600" /></div>
+                  <div>
+                    <p className="text-2xl font-bold text-slate-900">{analytics.total_records}</p>
+                    <p className="text-xs text-slate-500 font-medium">Total Records</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-5 flex flex-col justify-center h-full">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-emerald-100 rounded-lg"><CheckCircle2 className="w-5 h-5 text-emerald-600" /></div>
+                  <div>
+                    <p className="text-2xl font-bold text-emerald-700">{analytics.present_count}</p>
+                    <p className="text-xs text-emerald-600 font-medium">Present</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-5 flex flex-col justify-center h-full">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-rose-100 rounded-lg"><XCircle className="w-5 h-5 text-rose-600" /></div>
+                  <div>
+                    <p className="text-2xl font-bold text-rose-700">{analytics.absent_count}</p>
+                    <p className="text-xs text-rose-600 font-medium">Absent</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-5 flex flex-col justify-center h-full">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-indigo-100 rounded-lg"><BarChart3 className="w-5 h-5 text-indigo-600" /></div>
+                  <div>
+                    <p className="text-2xl font-bold text-indigo-700">{analytics.attendance_percentage}%</p>
+                    <p className="text-xs text-indigo-600 font-medium">Overall Rate</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Student Attendance Summary</CardTitle>
+              <CardDescription>Aggregated attendance per student across your sessions.</CardDescription>
+            </CardHeader>
+            <CardContent className="p-0 overflow-x-auto">
+              <Table>
+                <Thead>
+                  <Tr>
+                    <Th>USN</Th>
+                    <Th>Name</Th>
+                    <Th>Classes</Th>
+                    <Th>Present</Th>
+                    <Th>Absent</Th>
+                    <Th>Percentage</Th>
+                  </Tr>
+                </Thead>
+                <Tbody>
+                  {analytics.student_stats.length > 0 ? (
+                    analytics.student_stats.map((student) => (
+                      <Tr key={student.student_id}>
+                        <Td><span className="font-medium">{student.usn}</span></Td>
+                        <Td>{student.name}</Td>
+                        <Td>{student.total_classes}</Td>
+                        <Td><span className="text-emerald-600 font-medium">{student.present_count}</span></Td>
+                        <Td><span className="text-rose-600 font-medium">{student.absent_count}</span></Td>
+                        <Td>
+                          <span className={`font-semibold ${student.attendance_percentage < 75 ? 'text-rose-600' : 'text-slate-700'}`}>
+                            {student.attendance_percentage}%
+                          </span>
+                        </Td>
+                      </Tr>
+                    ))
+                  ) : (
+                    <Tr>
+                      <Td colSpan={6} className="text-center py-6 text-slate-500">
+                        No student attendance data found for this period.
+                      </Td>
+                    </Tr>
+                  )}
+                </Tbody>
+              </Table>
+            </CardContent>
+          </Card>
+        </>
+      ) : null}
+    </div>
+  );
+}
