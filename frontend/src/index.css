@@ -40,3 +40,12 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+@media print {
+  .hide-on-print { display: none !important; }
+  body { background-color: white; }
+  .dashboard-layout-sidebar { display: none !important; }
+  .dashboard-layout-header { display: none !important; }
+  .dashboard-layout-main { margin: 0 !important; padding: 0 !important; width: 100% !important; overflow: visible !important; }
+  .print-break-inside-avoid { break-inside: avoid; }
+}

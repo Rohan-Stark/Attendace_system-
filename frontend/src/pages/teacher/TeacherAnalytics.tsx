@@ -5,13 +5,15 @@ import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { ErrorMessage } from '../../components/ui/ErrorMessage';
 import { Button } from '../../components/ui/Button';
 import { analyticsService } from '../../services/analytics.service';
+import { reportService } from '../../services/report.service';
 import type { TeacherAnalyticsResponse } from '../../types/api';
-import { BarChart3, Users, CheckCircle2, XCircle, CalendarDays, Filter } from 'lucide-react';
+import { BarChart3, Users, CheckCircle2, XCircle, CalendarDays, Filter, Download, FileText, Printer } from 'lucide-react';
 
 export function TeacherAnalytics() {
   const [analytics, setAnalytics] = useState<TeacherAnalyticsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isExporting, setIsExporting] = useState(false);
   
   const [fromDate, setFromDate] = useState('');
   const [toDate, setToDate] = useState('');
@@ -42,6 +44,32 @@ export function TeacherAnalytics() {
     loadData();
   };
 
+  const handleExportCsv = async () => {
+    setIsExporting(true);
+    try {
+      await reportService.downloadTeacherCsv(fromDate || undefined, toDate || undefined);
+    } catch (err: any) {
+      setError(err.message || 'Failed to export CSV');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleExportPdf = async () => {
+    setIsExporting(true);
+    try {
+      await reportService.downloadTeacherPdf(fromDate || undefined, toDate || undefined);
+    } catch (err: any) {
+      setError(err.message || 'Failed to export PDF');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -53,21 +81,34 @@ export function TeacherAnalytics() {
           <p className="text-slate-500 mt-1">Attendance statistics for your classes</p>
         </div>
         
-        <form onSubmit={handleFilter} className="flex items-end gap-2 bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
-          <div>
-            <label className="block text-xs font-medium text-slate-700 mb-1">From Date</label>
-            <input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)}
-              className="h-9 text-sm px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+        <div className="flex flex-col items-end gap-3 hide-on-print">
+          <form onSubmit={handleFilter} className="flex items-end gap-2 bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+            <div>
+              <label className="block text-xs font-medium text-slate-700 mb-1">From Date</label>
+              <input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)}
+                className="h-9 text-sm px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-slate-700 mb-1">To Date</label>
+              <input type="date" value={toDate} onChange={e => setToDate(e.target.value)}
+                className="h-9 text-sm px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+            </div>
+            <Button type="submit" size="sm" className="h-9 flex items-center gap-2">
+              <Filter className="w-4 h-4" /> Filter
+            </Button>
+          </form>
+          <div className="flex items-center gap-2">
+            <Button variant="outline" size="sm" onClick={handleExportCsv} disabled={isExporting || loading || !analytics} className="bg-white">
+              <FileText className="w-4 h-4 mr-2" /> CSV
+            </Button>
+            <Button variant="outline" size="sm" onClick={handleExportPdf} disabled={isExporting || loading || !analytics} className="bg-white">
+              <Download className="w-4 h-4 mr-2" /> PDF
+            </Button>
+            <Button variant="secondary" size="sm" onClick={handlePrint} disabled={loading || !analytics}>
+              <Printer className="w-4 h-4 mr-2" /> Print
+            </Button>
           </div>
-          <div>
-            <label className="block text-xs font-medium text-slate-700 mb-1">To Date</label>
-            <input type="date" value={toDate} onChange={e => setToDate(e.target.value)}
-              className="h-9 text-sm px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
-          </div>
-          <Button type="submit" size="sm" className="h-9 flex items-center gap-2">
-            <Filter className="w-4 h-4" /> Filter
-          </Button>
-        </form>
+        </div>
       </div>
 
       {error && <ErrorMessage message={error} />}

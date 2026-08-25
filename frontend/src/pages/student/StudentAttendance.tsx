@@ -5,13 +5,16 @@ import { Table, Thead, Tbody, Tr, Th, Td } from '../../components/ui/Table';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { ErrorMessage } from '../../components/ui/ErrorMessage';
 import { analyticsService } from '../../services/analytics.service';
+import { reportService } from '../../services/report.service';
 import type { StudentAnalyticsResponse } from '../../types/api';
-import { CalendarDays, CheckCircle2, XCircle, BarChart3 } from 'lucide-react';
+import { CalendarDays, CheckCircle2, XCircle, BarChart3, Download, FileText, Printer } from 'lucide-react';
+import { Button } from '../../components/ui/Button';
 
 export function StudentAttendance() {
   const [analytics, setAnalytics] = useState<StudentAnalyticsResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -34,15 +37,55 @@ export function StudentAttendance() {
   const percentage = analytics?.attendance_percentage ?? 0;
   const records = analytics?.history ?? [];
 
+  const handleExportCsv = async () => {
+    setIsExporting(true);
+    try {
+      await reportService.downloadStudentCsv();
+    } catch (err: any) {
+      setError(err.message || 'Failed to export CSV');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleExportPdf = async () => {
+    setIsExporting(true);
+    try {
+      await reportService.downloadStudentPdf();
+    } catch (err: any) {
+      setError(err.message || 'Failed to export PDF');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handlePrint = () => {
+    window.print();
+  };
+
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-          <CalendarDays className="w-7 h-7 text-emerald-600" />
-          My Attendance
-        </h1>
-        <p className="text-slate-500 mt-1">View your submitted attendance history</p>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
+            <CalendarDays className="w-7 h-7 text-emerald-600" />
+            My Attendance
+          </h1>
+          <p className="text-slate-500 mt-1">View your submitted attendance history</p>
+        </div>
+        
+        <div className="flex items-center gap-2 hide-on-print">
+          <Button variant="outline" size="sm" onClick={handleExportCsv} disabled={isExporting || loading || !analytics} className="bg-white">
+            <FileText className="w-4 h-4 mr-2" /> CSV
+          </Button>
+          <Button variant="outline" size="sm" onClick={handleExportPdf} disabled={isExporting || loading || !analytics} className="bg-white">
+            <Download className="w-4 h-4 mr-2" /> PDF
+          </Button>
+          <Button variant="secondary" size="sm" onClick={handlePrint} disabled={loading || !analytics}>
+            <Printer className="w-4 h-4 mr-2" /> Print
+          </Button>
+        </div>
       </div>
 
       {error && <ErrorMessage message={error} />}

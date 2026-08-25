@@ -56,7 +56,7 @@ export function DashboardLayout() {
   return (
     <div className="min-h-screen bg-slate-50 flex">
       {/* Sidebar */}
-      <div className="w-64 bg-slate-900 text-white flex flex-col shrink-0">
+      <div className="w-64 bg-slate-900 text-white flex flex-col shrink-0 dashboard-layout-sidebar">
         <div className="h-16 flex items-center px-6 border-b border-slate-800">
           <h1 className="text-xl font-bold tracking-tight">Smart<span className="text-blue-400">Attend</span></h1>
         </div>
@@ -95,8 +95,8 @@ export function DashboardLayout() {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-w-0">
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0 shadow-sm z-10">
+      <div className="flex-1 flex flex-col min-w-0 dashboard-layout-main">
+        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0 shadow-sm z-10 dashboard-layout-header">
           <div className="flex items-center">
              {user?.department_id && (
                <span className="text-sm font-medium text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
