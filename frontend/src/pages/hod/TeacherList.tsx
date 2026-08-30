@@ -69,7 +69,7 @@ export function TeacherList() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">Teachers</h1>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white transition-colors duration-200">Teachers</h1>
         <Button onClick={handleCreate}>Add Teacher</Button>
       </div>
 
@@ -97,7 +97,7 @@ export function TeacherList() {
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      className="text-red-600 hover:text-red-700"
+                      className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                       onClick={() => setDeactivateDialog({ isOpen: true, id: teacher.id })}
                     >
                       Deactivate
@@ -109,7 +109,7 @@ export function TeacherList() {
           ))}
           {teachers.length === 0 && (
             <Tr>
-              <Td className="text-center text-slate-500 py-8">No teachers found.</Td>
+              <Td colSpan={4} className="text-center text-slate-500 dark:text-slate-400 py-8">No teachers found.</Td>
             </Tr>
           )}
         </Tbody>

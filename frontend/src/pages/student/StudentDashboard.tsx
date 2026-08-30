@@ -17,7 +17,7 @@ export function StudentDashboard() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-slate-900 mb-6">Student Portal</h1>
+      <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-6 transition-colors duration-200">Student Portal</h1>
       
       {/* Biometric Status Card */}
       <Card>
@@ -25,30 +25,30 @@ export function StudentDashboard() {
           <CardTitle>Biometric Registration</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex items-center justify-between p-4 bg-slate-50 rounded-lg border border-slate-100">
+          <div className="flex items-center justify-between p-4 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-100 dark:border-slate-800 transition-colors duration-200">
             <div className="flex items-center space-x-3">
               {faceRegistered === true ? (
                 <>
                   <CheckCircle2 className="w-8 h-8 text-emerald-500" />
                   <div>
-                    <h3 className="font-semibold text-slate-900">Face Registered</h3>
-                    <p className="text-sm text-slate-500">Your face is actively registered for attendance.</p>
+                    <h3 className="font-semibold text-slate-900 dark:text-white transition-colors duration-200">Face Registered</h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors duration-200">Your face is actively registered for attendance.</p>
                   </div>
                 </>
               ) : faceRegistered === false ? (
                 <>
                   <XCircle className="w-8 h-8 text-rose-500" />
                   <div>
-                    <h3 className="font-semibold text-slate-900">Face Not Registered</h3>
-                    <p className="text-sm text-slate-500">You must register your face to be marked present.</p>
+                    <h3 className="font-semibold text-slate-900 dark:text-white transition-colors duration-200">Face Not Registered</h3>
+                    <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors duration-200">You must register your face to be marked present.</p>
                   </div>
                 </>
               ) : (
                 <div className="animate-pulse flex items-center space-x-3">
-                  <div className="w-8 h-8 bg-slate-200 rounded-full" />
+                  <div className="w-8 h-8 bg-slate-200 dark:bg-slate-700 rounded-full transition-colors duration-200" />
                   <div className="space-y-2">
-                    <div className="h-4 bg-slate-200 rounded w-32" />
-                    <div className="h-3 bg-slate-200 rounded w-48" />
+                    <div className="h-4 bg-slate-200 dark:bg-slate-700 rounded w-32 transition-colors duration-200" />
+                    <div className="h-3 bg-slate-200 dark:bg-slate-700 rounded w-48 transition-colors duration-200" />
                   </div>
                 </div>
               )}
@@ -70,7 +70,7 @@ export function StudentDashboard() {
       <Card className="hover:shadow-md transition-shadow">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <CalendarDays className="w-5 h-5 text-emerald-600" />
+            <CalendarDays className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
             My Attendance
           </CardTitle>
           <CardDescription>

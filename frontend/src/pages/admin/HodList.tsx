@@ -76,7 +76,7 @@ export function HodList() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">Heads of Department</h1>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white transition-colors duration-200">Heads of Department</h1>
         <Button onClick={handleCreate}>Add HOD</Button>
       </div>
 
@@ -106,7 +106,7 @@ export function HodList() {
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      className="text-red-600 hover:text-red-700"
+                      className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                       onClick={() => setDeactivateDialog({ isOpen: true, id: hod.id })}
                     >
                       Deactivate
@@ -118,7 +118,7 @@ export function HodList() {
           ))}
           {hods.length === 0 && (
             <Tr>
-              <Td className="text-center text-slate-500 py-8">No HODs found.</Td>
+              <Td colSpan={5} className="text-center text-slate-500 dark:text-slate-400 py-8">No HODs found.</Td>
             </Tr>
           )}
         </Tbody>

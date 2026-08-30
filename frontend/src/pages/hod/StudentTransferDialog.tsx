@@ -75,7 +75,7 @@ export function StudentTransferDialog({ isOpen, onClose, student }: StudentTrans
 
   return (
     <Modal isOpen={isOpen} onClose={() => onClose(false)} title="Transfer Student">
-      <div className="mb-4 text-sm text-slate-600 bg-blue-50 p-3 rounded border border-blue-100">
+      <div className="mb-4 text-sm text-slate-600 dark:text-slate-300 bg-blue-50 dark:bg-blue-900/20 p-3 rounded border border-blue-100 dark:border-blue-800 transition-colors duration-200">
         Transferring student <strong>{student.profile?.name} ({student.profile?.usn})</strong> to another department. 
         This will move all their data and remove them from your current department view.
       </div>
@@ -84,9 +84,9 @@ export function StudentTransferDialog({ isOpen, onClose, student }: StudentTrans
         <ErrorMessage message={error} />
         
         <div className="flex flex-col space-y-1.5">
-          <label className="text-sm font-medium text-slate-700">Target Department</label>
+          <label className="text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors duration-200">Target Department</label>
           <select
-            className="px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white disabled:bg-slate-100"
+            className="px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white disabled:bg-slate-100 disabled:dark:bg-slate-800 transition-colors duration-200"
             value={targetDepartmentId}
             onChange={(e) => setTargetDepartmentId(e.target.value)}
             required
@@ -103,9 +103,9 @@ export function StudentTransferDialog({ isOpen, onClose, student }: StudentTrans
         
         <div className="grid grid-cols-2 gap-4">
           <div className="flex flex-col space-y-1.5">
-            <label className="text-sm font-medium text-slate-700">Target Semester</label>
+            <label className="text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors duration-200">Target Semester</label>
             <select
-              className="px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              className="px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white transition-colors duration-200"
               value={targetSemester}
               onChange={(e) => setTargetSemester(e.target.value)}
               required

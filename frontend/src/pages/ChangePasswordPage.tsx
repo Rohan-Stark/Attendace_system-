@@ -48,9 +48,9 @@ export function ChangePasswordPage() {
   return (
     <div className={user?.must_change_password ? "" : "max-w-md mx-auto"}>
       {user?.must_change_password && (
-        <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
-          <h3 className="text-blue-800 font-medium">Password Change Required</h3>
-          <p className="text-blue-600 text-sm mt-1">
+        <div className="mb-6 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg transition-colors duration-200">
+          <h3 className="text-blue-800 dark:text-blue-300 font-medium">Password Change Required</h3>
+          <p className="text-blue-600 dark:text-blue-400 text-sm mt-1">
             For security reasons, you must change your password before accessing the system.
           </p>
         </div>

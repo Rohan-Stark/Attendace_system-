@@ -27,7 +27,7 @@ export function ConfirmDialog({
 }: ConfirmDialogProps) {
   return (
     <Modal isOpen={isOpen} onClose={isLoading ? () => {} : onCancel} title={title}>
-      <div className="mb-6 text-slate-600">
+      <div className="mb-6 text-slate-600 dark:text-slate-300">
         {message}
       </div>
       <div className="flex justify-end space-x-3 mt-6">

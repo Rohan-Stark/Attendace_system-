@@ -66,11 +66,11 @@ export function AttendancePortal() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-            <ClipboardList className="w-7 h-7 text-blue-600" />
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors duration-200">
+            <ClipboardList className="w-7 h-7 text-blue-600 dark:text-blue-400" />
             Attendance Portal
           </h1>
-          <p className="text-slate-500 mt-1">{today}</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1 transition-colors duration-200">{today}</p>
         </div>
         <Button onClick={() => setShowForm(!showForm)} size="md">
           <Plus className="w-4 h-4 mr-2" />
@@ -82,7 +82,7 @@ export function AttendancePortal() {
 
       {/* New Session Form */}
       {showForm && (
-        <Card className="border-blue-200 bg-blue-50/30">
+        <Card className="border-blue-200 dark:border-blue-800 bg-blue-50/30 dark:bg-blue-900/10 transition-colors duration-200">
           <CardHeader>
             <CardTitle>Start New Attendance Session</CardTitle>
             <CardDescription>Select the class context for today's attendance</CardDescription>
@@ -90,14 +90,14 @@ export function AttendancePortal() {
           <CardContent>
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 items-end">
               <div>
-                <label htmlFor="semester-select" className="block text-sm font-medium text-slate-700 mb-1">
+                <label htmlFor="semester-select" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 transition-colors duration-200">
                   Semester
                 </label>
                 <select
                   id="semester-select"
                   value={semester}
                   onChange={(e) => setSemester(Number(e.target.value))}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                  className="w-full rounded-lg border border-slate-300 dark:border-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white transition-colors duration-200"
                 >
                   {[1, 2, 3, 4, 5, 6, 7, 8].map((s) => (
                     <option key={s} value={s}>Semester {s}</option>
@@ -105,14 +105,14 @@ export function AttendancePortal() {
                 </select>
               </div>
               <div>
-                <label htmlFor="section-select" className="block text-sm font-medium text-slate-700 mb-1">
+                <label htmlFor="section-select" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 transition-colors duration-200">
                   Section
                 </label>
                 <select
                   id="section-select"
                   value={section}
                   onChange={(e) => setSection(e.target.value)}
-                  className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white"
+                  className="w-full rounded-lg border border-slate-300 dark:border-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white transition-colors duration-200"
                 >
                   {['A', 'B', 'C', 'D'].map((s) => (
                     <option key={s} value={s}>Section {s}</option>
@@ -136,12 +136,12 @@ export function AttendancePortal() {
       {loading ? (
         <LoadingSpinner text="Loading today's sessions..." />
       ) : sessions.length === 0 ? (
-        <Card className="border-dashed border-2 border-slate-300">
+        <Card className="border-dashed border-2 border-slate-300 dark:border-slate-700 transition-colors duration-200">
           <CardContent>
             <div className="text-center py-8">
-              <ClipboardList className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-              <h3 className="text-lg font-semibold text-slate-700 mb-1">No Sessions Today</h3>
-              <p className="text-sm text-slate-500 mb-4">
+              <ClipboardList className="w-12 h-12 text-slate-400 dark:text-slate-500 mx-auto mb-3" />
+              <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-1 transition-colors duration-200">No Sessions Today</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mb-4 transition-colors duration-200">
                 Create a new attendance session to get started.
               </p>
               <Button onClick={() => setShowForm(true)} size="sm">
@@ -156,16 +156,16 @@ export function AttendancePortal() {
           {sessions.map((session) => (
             <Card
               key={session.id}
-              className="cursor-pointer hover:shadow-md transition-shadow hover:border-blue-300"
+              className="cursor-pointer hover:shadow-md transition-shadow hover:border-blue-300 dark:hover:border-blue-700"
               onClick={() => navigate(`/teacher/attendance/${session.id}`)}
             >
               <CardContent className="p-5">
                 <div className="flex items-start justify-between mb-3">
                   <div>
-                    <p className="text-lg font-semibold text-slate-900">
+                    <p className="text-lg font-semibold text-slate-900 dark:text-white transition-colors duration-200">
                       Sem {session.semester} — Sec {session.section}
                     </p>
-                    <p className="text-xs text-slate-500 mt-0.5">{session.date}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 transition-colors duration-200">{session.date}</p>
                   </div>
                   <Badge variant={session.status === 'submitted' ? 'success' : 'info'}>
                     {session.status === 'submitted' ? (
@@ -180,7 +180,7 @@ export function AttendancePortal() {
                   </Badge>
                 </div>
                 {session.started_at && (
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 transition-colors duration-200">
                     Started {new Date(session.started_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
                   </p>
                 )}

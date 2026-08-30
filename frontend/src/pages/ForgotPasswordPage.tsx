@@ -34,11 +34,11 @@ export function ForgotPasswordPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold text-slate-900 mb-2">Request Received</h2>
-        <p className="text-slate-600 mb-6">
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2 transition-colors duration-200">Request Received</h2>
+        <p className="text-slate-600 dark:text-slate-400 mb-6 transition-colors duration-200">
           If the account exists, password reset instructions have been initiated.
         </p>
-        <Link to="/login" className="text-blue-600 font-medium hover:text-blue-500">
+        <Link to="/login" className="text-blue-600 dark:text-blue-400 font-medium hover:text-blue-500 dark:hover:text-blue-300 transition-colors duration-200">
           Return to login
         </Link>
       </div>
@@ -47,8 +47,8 @@ export function ForgotPasswordPage() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-slate-900 mb-2 text-center">Reset your password</h2>
-      <p className="text-slate-600 mb-6 text-center text-sm">
+      <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2 text-center transition-colors duration-200">Reset your password</h2>
+      <p className="text-slate-600 dark:text-slate-400 mb-6 text-center text-sm transition-colors duration-200">
         Enter your login ID and we'll process your request.
       </p>
       

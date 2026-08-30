@@ -89,11 +89,11 @@ export function StudentList() {
   return (
     <div>
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
-        <h1 className="text-2xl font-bold text-slate-900">Students</h1>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white transition-colors duration-200">Students</h1>
         <Button onClick={handleCreate}>Add Student</Button>
       </div>
 
-      <div className="bg-white p-4 rounded-lg shadow-sm border border-slate-200 mb-6 flex flex-wrap gap-4 items-end">
+      <div className="bg-white dark:bg-slate-900 p-4 rounded-lg shadow-sm border border-slate-200 dark:border-slate-800 mb-6 flex flex-wrap gap-4 items-end transition-colors duration-200">
         <Input 
           label="USN Filter" 
           value={usn} 
@@ -101,9 +101,9 @@ export function StudentList() {
           className="w-full sm:w-48"
         />
         <div className="flex flex-col space-y-1.5 w-full sm:w-32">
-          <label className="text-sm font-medium text-slate-700">Semester</label>
+          <label className="text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors duration-200">Semester</label>
           <select
-            className="px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            className="px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white transition-colors duration-200"
             value={semester}
             onChange={(e) => setSemester(e.target.value)}
           >
@@ -156,7 +156,7 @@ export function StudentList() {
                         <Button 
                           variant="ghost" 
                           size="sm" 
-                          className="text-red-600 hover:text-red-700"
+                          className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
                           onClick={() => setRemoveDialog({ isOpen: true, id: student.id })}
                         >
                           Remove
@@ -169,7 +169,7 @@ export function StudentList() {
             ))}
             {students.length === 0 && (
               <Tr>
-                <Td className="text-center text-slate-500 py-8">No students found matching filters.</Td>
+                <Td colSpan={5} className="text-center text-slate-500 dark:text-slate-400 py-8">No students found matching filters.</Td>
               </Tr>
             )}
           </Tbody>

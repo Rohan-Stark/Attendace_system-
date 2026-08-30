@@ -74,34 +74,34 @@ export function AdminAnalytics() {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-            <BarChart3 className="w-7 h-7 text-indigo-600" />
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors duration-200">
+            <BarChart3 className="w-7 h-7 text-indigo-600 dark:text-indigo-400" />
             System Analytics
           </h1>
-          <p className="text-slate-500 mt-1">Global attendance statistics across all departments</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1 transition-colors duration-200">Global attendance statistics across all departments</p>
         </div>
         
         <div className="flex flex-col items-end gap-3 hide-on-print">
-          <form onSubmit={handleFilter} className="flex items-end gap-2 bg-white p-3 rounded-lg border border-slate-200 shadow-sm">
+          <form onSubmit={handleFilter} className="flex items-end gap-2 bg-white dark:bg-slate-900 p-3 rounded-lg border border-slate-200 dark:border-slate-800 shadow-sm transition-colors duration-200">
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">From Date</label>
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1 transition-colors duration-200">From Date</label>
               <input type="date" value={fromDate} onChange={e => setFromDate(e.target.value)}
-                className="h-9 text-sm px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="h-9 text-sm px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200" />
             </div>
             <div>
-              <label className="block text-xs font-medium text-slate-700 mb-1">To Date</label>
+              <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1 transition-colors duration-200">To Date</label>
               <input type="date" value={toDate} onChange={e => setToDate(e.target.value)}
-                className="h-9 text-sm px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
+                className="h-9 text-sm px-3 py-2 border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors duration-200" />
             </div>
             <Button type="submit" size="sm" className="h-9 flex items-center gap-2">
               <Filter className="w-4 h-4" /> Filter
             </Button>
           </form>
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={handleExportCsv} disabled={isExporting || loading || !analytics} className="bg-white">
+            <Button variant="outline" size="sm" onClick={handleExportCsv} disabled={isExporting || loading || !analytics} className="bg-white dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 transition-colors duration-200">
               <FileText className="w-4 h-4 mr-2" /> CSV
             </Button>
-            <Button variant="outline" size="sm" onClick={handleExportPdf} disabled={isExporting || loading || !analytics} className="bg-white">
+            <Button variant="outline" size="sm" onClick={handleExportPdf} disabled={isExporting || loading || !analytics} className="bg-white dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 transition-colors duration-200">
               <Download className="w-4 h-4 mr-2" /> PDF
             </Button>
             <Button variant="secondary" size="sm" onClick={handlePrint} disabled={loading || !analytics}>
@@ -121,10 +121,10 @@ export function AdminAnalytics() {
             <Card>
               <CardContent className="p-5 flex flex-col justify-center h-full">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-slate-100 rounded-lg"><Building2 className="w-5 h-5 text-slate-600" /></div>
+                  <div className="p-2 bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors duration-200"><Building2 className="w-5 h-5 text-slate-600 dark:text-slate-400" /></div>
                   <div>
-                    <p className="text-2xl font-bold text-slate-900">{analytics.total_departments_active}</p>
-                    <p className="text-xs text-slate-500 font-medium">Active Departments</p>
+                    <p className="text-2xl font-bold text-slate-900 dark:text-white transition-colors duration-200">{analytics.total_departments_active}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 font-medium transition-colors duration-200">Active Departments</p>
                   </div>
                 </div>
               </CardContent>
@@ -132,10 +132,10 @@ export function AdminAnalytics() {
             <Card>
               <CardContent className="p-5 flex flex-col justify-center h-full">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-blue-100 rounded-lg"><CalendarDays className="w-5 h-5 text-blue-600" /></div>
+                  <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg transition-colors duration-200"><CalendarDays className="w-5 h-5 text-blue-600 dark:text-blue-400" /></div>
                   <div>
-                    <p className="text-2xl font-bold text-slate-900">{analytics.total_sessions}</p>
-                    <p className="text-xs text-slate-500 font-medium">Total Sessions</p>
+                    <p className="text-2xl font-bold text-slate-900 dark:text-white transition-colors duration-200">{analytics.total_sessions}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 font-medium transition-colors duration-200">Total Sessions</p>
                   </div>
                 </div>
               </CardContent>
@@ -143,10 +143,10 @@ export function AdminAnalytics() {
             <Card>
               <CardContent className="p-5 flex flex-col justify-center h-full">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-emerald-100 rounded-lg"><CheckCircle2 className="w-5 h-5 text-emerald-600" /></div>
+                  <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg transition-colors duration-200"><CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" /></div>
                   <div>
-                    <p className="text-2xl font-bold text-emerald-700">{analytics.present_count}</p>
-                    <p className="text-xs text-emerald-600 font-medium">Total Present</p>
+                    <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400 transition-colors duration-200">{analytics.present_count}</p>
+                    <p className="text-xs text-emerald-600 dark:text-emerald-500 font-medium transition-colors duration-200">Total Present</p>
                   </div>
                 </div>
               </CardContent>
@@ -154,10 +154,10 @@ export function AdminAnalytics() {
             <Card>
               <CardContent className="p-5 flex flex-col justify-center h-full">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-indigo-100 rounded-lg"><BarChart3 className="w-5 h-5 text-indigo-600" /></div>
+                  <div className="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-lg transition-colors duration-200"><BarChart3 className="w-5 h-5 text-indigo-600 dark:text-indigo-400" /></div>
                   <div>
-                    <p className="text-2xl font-bold text-indigo-700">{analytics.attendance_percentage}%</p>
-                    <p className="text-xs text-indigo-600 font-medium">Global Rate</p>
+                    <p className="text-2xl font-bold text-indigo-700 dark:text-indigo-400 transition-colors duration-200">{analytics.attendance_percentage}%</p>
+                    <p className="text-xs text-indigo-600 dark:text-indigo-500 font-medium transition-colors duration-200">Global Rate</p>
                   </div>
                 </div>
               </CardContent>
@@ -184,19 +184,19 @@ export function AdminAnalytics() {
                   {analytics.department_stats.length > 0 ? (
                     analytics.department_stats.map((dept) => (
                       <Tr key={dept.department_id}>
-                        <Td><span className="font-medium text-slate-900">{dept.department_name}</span></Td>
+                        <Td><span className="font-medium text-slate-900 dark:text-white transition-colors duration-200">{dept.department_name}</span></Td>
                         <Td>{dept.total_sessions}</Td>
-                        <Td><span className="text-emerald-600">{dept.present_count}</span></Td>
-                        <Td><span className="text-rose-600">{dept.absent_count}</span></Td>
+                        <Td><span className="text-emerald-600 dark:text-emerald-400 transition-colors duration-200">{dept.present_count}</span></Td>
+                        <Td><span className="text-rose-600 dark:text-rose-400 transition-colors duration-200">{dept.absent_count}</span></Td>
                         <Td>
-                          <span className={`font-semibold ${dept.attendance_percentage < 75 ? 'text-rose-600' : 'text-slate-700'}`}>
+                          <span className={`font-semibold transition-colors duration-200 ${dept.attendance_percentage < 75 ? 'text-rose-600 dark:text-rose-400' : 'text-slate-700 dark:text-slate-300'}`}>
                             {dept.attendance_percentage}%
                           </span>
                         </Td>
                       </Tr>
                     ))
                   ) : (
-                    <Tr><Td colSpan={5} className="text-center py-6 text-slate-500">No departmental data found.</Td></Tr>
+                    <Tr><Td colSpan={5} className="text-center py-6 text-slate-500 dark:text-slate-400 transition-colors duration-200">No departmental data found.</Td></Tr>
                   )}
                 </Tbody>
               </Table>

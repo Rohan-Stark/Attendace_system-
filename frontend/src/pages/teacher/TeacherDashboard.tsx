@@ -8,13 +8,13 @@ export function TeacherDashboard() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-slate-900 mb-6">Teacher Portal</h1>
+      <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-6 transition-colors duration-200">Teacher Portal</h1>
 
       {/* Attendance Card */}
       <Card className="hover:shadow-md transition-shadow">
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <ClipboardList className="w-5 h-5 text-blue-600" />
+            <ClipboardList className="w-5 h-5 text-blue-600 dark:text-blue-400" />
             Attendance Management
           </CardTitle>
           <CardDescription>
@@ -32,12 +32,12 @@ export function TeacherDashboard() {
       </Card>
 
       {/* Upcoming Phases */}
-      <Card className="bg-blue-50 border-blue-200 border-dashed border-2">
+      <Card className="bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 border-dashed border-2 transition-colors duration-200">
         <CardHeader>
-          <CardTitle className="text-blue-800">Coming Soon</CardTitle>
+          <CardTitle className="text-blue-800 dark:text-blue-300 transition-colors duration-200">Coming Soon</CardTitle>
         </CardHeader>
         <CardContent>
-          <p className="text-blue-700">
+          <p className="text-blue-700 dark:text-blue-400 transition-colors duration-200">
             Subjects, Timetables, Analytics, and Reports will be available in future phases.
           </p>
         </CardContent>

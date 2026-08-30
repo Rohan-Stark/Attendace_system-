@@ -111,7 +111,7 @@ export function FaceRegistration() {
   return (
     <div className="max-w-3xl mx-auto">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">Face Registration</h1>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white transition-colors duration-200">Face Registration</h1>
         <Button variant="outline" onClick={() => navigate('/student')}>Back to Dashboard</Button>
       </div>
 
@@ -124,10 +124,10 @@ export function FaceRegistration() {
         </CardHeader>
         <CardContent>
           {success ? (
-            <div className="flex flex-col items-center justify-center p-8 space-y-4 text-emerald-600">
+            <div className="flex flex-col items-center justify-center p-8 space-y-4 text-emerald-600 dark:text-emerald-400 transition-colors duration-200">
               <CheckCircle size={64} />
               <h2 className="text-2xl font-semibold">Registration Successful</h2>
-              <p className="text-slate-600 text-center">Your face has been securely registered in the system.</p>
+              <p className="text-slate-600 dark:text-slate-400 text-center transition-colors duration-200">Your face has been securely registered in the system.</p>
               <Button onClick={() => navigate('/student')} className="mt-4">Return to Dashboard</Button>
             </div>
           ) : (
@@ -135,9 +135,9 @@ export function FaceRegistration() {
               <ErrorMessage message={error} />
               
               {!isCameraActive ? (
-                <div className="flex flex-col items-center p-8 bg-slate-50 border-2 border-dashed border-slate-200 rounded-lg">
-                  <Camera size={48} className="text-slate-400 mb-4" />
-                  <p className="text-slate-600 mb-6 text-center max-w-md">
+                <div className="flex flex-col items-center p-8 bg-slate-50 dark:bg-slate-900/50 border-2 border-dashed border-slate-200 dark:border-slate-800 rounded-lg transition-colors duration-200">
+                  <Camera size={48} className="text-slate-400 dark:text-slate-500 mb-4 transition-colors duration-200" />
+                  <p className="text-slate-600 dark:text-slate-400 mb-6 text-center max-w-md transition-colors duration-200">
                     Please ensure you are in a well-lit area, looking directly at the camera, and your face is not obscured.
                   </p>
                   <Button onClick={startCamera}>Start Camera</Button>
@@ -166,7 +166,7 @@ export function FaceRegistration() {
                     )}
                   </div>
                   
-                  <div className="flex justify-between items-center bg-blue-50 p-4 rounded-lg text-blue-800 text-sm">
+                  <div className="flex justify-between items-center bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg text-blue-800 dark:text-blue-300 text-sm transition-colors duration-200">
                     <ul className="list-disc list-inside space-y-1">
                       <li>Center your face in the oval guide</li>
                       <li>Look directly at the camera</li>

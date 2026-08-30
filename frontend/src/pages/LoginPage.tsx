@@ -40,7 +40,7 @@ export function LoginPage() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-slate-900 mb-6 text-center">Sign in to your account</h2>
+      <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6 text-center transition-colors duration-200">Sign in to your account</h2>
       
       <form onSubmit={handleSubmit} className="space-y-4">
         <ErrorMessage message={error} />

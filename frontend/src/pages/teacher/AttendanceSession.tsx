@@ -199,7 +199,7 @@ export function AttendanceSession() {
               <CardTitle>
                 Semester {session.semester} — Section {session.section}
               </CardTitle>
-              <p className="text-sm text-slate-500 mt-1">{session.date}</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 transition-colors duration-200">{session.date}</p>
             </div>
             <div className="flex items-center gap-2">
               <Badge variant={isSubmitted ? 'success' : 'info'}>
@@ -215,17 +215,17 @@ export function AttendanceSession() {
         <CardContent>
           {/* Stats Row */}
           <div className="grid grid-cols-3 gap-4 mb-6">
-            <div className="text-center p-3 bg-slate-50 rounded-lg border border-slate-100">
-              <p className="text-2xl font-bold text-slate-900">{totalCount}</p>
-              <p className="text-xs text-slate-500 font-medium">Total Students</p>
+            <div className="text-center p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg border border-slate-100 dark:border-slate-800 transition-colors duration-200">
+              <p className="text-2xl font-bold text-slate-900 dark:text-white transition-colors duration-200">{totalCount}</p>
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium transition-colors duration-200">Total Students</p>
             </div>
-            <div className="text-center p-3 bg-emerald-50 rounded-lg border border-emerald-100">
-              <p className="text-2xl font-bold text-emerald-700">{presentCount}</p>
-              <p className="text-xs text-emerald-600 font-medium">Present</p>
+            <div className="text-center p-3 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg border border-emerald-100 dark:border-emerald-800 transition-colors duration-200">
+              <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400 transition-colors duration-200">{presentCount}</p>
+              <p className="text-xs text-emerald-600 dark:text-emerald-500 font-medium transition-colors duration-200">Present</p>
             </div>
-            <div className="text-center p-3 bg-rose-50 rounded-lg border border-rose-100">
-              <p className="text-2xl font-bold text-rose-700">{absentCount}</p>
-              <p className="text-xs text-rose-600 font-medium">Absent</p>
+            <div className="text-center p-3 bg-rose-50 dark:bg-rose-900/20 rounded-lg border border-rose-100 dark:border-rose-800 transition-colors duration-200">
+              <p className="text-2xl font-bold text-rose-700 dark:text-rose-400 transition-colors duration-200">{absentCount}</p>
+              <p className="text-xs text-rose-600 dark:text-rose-500 font-medium transition-colors duration-200">Absent</p>
             </div>
           </div>
 
@@ -246,7 +246,7 @@ export function AttendanceSession() {
               </Button>
             )}
             {isSubmitted && (
-              <p className="text-sm text-emerald-600 font-medium flex items-center gap-1 self-center">
+              <p className="text-sm text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1 self-center transition-colors duration-200">
                 <CheckCircle2 className="w-4 h-4" />
                 Submitted — modifications allowed until midnight today
               </p>
@@ -285,32 +285,32 @@ export function AttendanceSession() {
           {lastRecognitionResult && (
             <div className="space-y-2">
               {lastRecognitionResult.recognized.length > 0 && (
-                <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
-                  <p className="text-sm font-semibold text-emerald-800 mb-1">
+                <div className="bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800 rounded-lg p-3 transition-colors duration-200">
+                  <p className="text-sm font-semibold text-emerald-800 dark:text-emerald-300 mb-1 transition-colors duration-200">
                     Recognized ({lastRecognitionResult.recognized.length}):
                   </p>
                   <ul className="space-y-1">
                     {lastRecognitionResult.recognized.map((r) => (
-                      <li key={r.student_id} className="text-sm text-emerald-700 flex items-center gap-2">
+                      <li key={r.student_id} className="text-sm text-emerald-700 dark:text-emerald-400 flex items-center gap-2 transition-colors duration-200">
                         <UserCheck className="w-4 h-4" />
                         <span className="font-medium">{r.usn}</span> — {r.name}
-                        <span className="text-emerald-500 text-xs">({(r.score * 100).toFixed(1)}%)</span>
+                        <span className="text-emerald-500 dark:text-emerald-600 text-xs transition-colors duration-200">({(r.score * 100).toFixed(1)}%)</span>
                       </li>
                     ))}
                   </ul>
                 </div>
               )}
               {lastRecognitionResult.unknown_count > 0 && (
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-                  <p className="text-sm text-amber-800">
+                <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3 transition-colors duration-200">
+                  <p className="text-sm text-amber-800 dark:text-amber-300 transition-colors duration-200">
                     <UserX className="w-4 h-4 inline mr-1" />
                     {lastRecognitionResult.unknown_count} unknown face(s) detected
                   </p>
                 </div>
               )}
               {lastRecognitionResult.recognized.length === 0 && lastRecognitionResult.unknown_count === 0 && (
-                <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
-                  <p className="text-sm text-slate-600">No faces detected in this frame.</p>
+                <div className="bg-slate-50 dark:bg-slate-900/50 border border-slate-200 dark:border-slate-800 rounded-lg p-3 transition-colors duration-200">
+                  <p className="text-sm text-slate-600 dark:text-slate-400 transition-colors duration-200">No faces detected in this frame.</p>
                 </div>
               )}
             </div>
@@ -377,12 +377,12 @@ export function AttendanceSession() {
           </Tbody>
         </Table>
       ) : (
-        <Card className="border-dashed border-2 border-slate-300">
+        <Card className="border-dashed border-2 border-slate-300 dark:border-slate-700 transition-colors duration-200">
           <CardContent>
             <div className="text-center py-8">
-              <UserX className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-              <h3 className="text-lg font-semibold text-slate-700">No Students Found</h3>
-              <p className="text-sm text-slate-500">
+              <UserX className="w-12 h-12 text-slate-400 dark:text-slate-500 mx-auto mb-3 transition-colors duration-200" />
+              <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300 transition-colors duration-200">No Students Found</h3>
+              <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors duration-200">
                 No students match this semester/section in your department.
               </p>
             </div>

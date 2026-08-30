@@ -49,7 +49,7 @@ export function DepartmentList() {
   return (
     <div>
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl font-bold text-slate-900">Departments</h1>
+        <h1 className="text-2xl font-bold text-slate-900 dark:text-white transition-colors duration-200">Departments</h1>
         <Button onClick={handleCreate}>Add Department</Button>
       </div>
 
@@ -77,7 +77,7 @@ export function DepartmentList() {
           ))}
           {departments.length === 0 && (
             <Tr>
-              <Td className="text-center text-slate-500 py-8 text-center" /* React does not complain here */>No departments found.</Td>
+              <Td colSpan={4} className="text-center text-slate-500 dark:text-slate-400 py-8">No departments found.</Td>
             </Tr>
           )}
         </Tbody>

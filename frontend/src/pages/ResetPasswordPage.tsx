@@ -53,11 +53,11 @@ export function ResetPasswordPage() {
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold text-slate-900 mb-2">Password Reset Successful</h2>
-        <p className="text-slate-600 mb-6">
+        <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-2 transition-colors duration-200">Password Reset Successful</h2>
+        <p className="text-slate-600 dark:text-slate-400 mb-6 transition-colors duration-200">
           You will be redirected to the login page shortly.
         </p>
-        <Link to="/login" className="text-blue-600 font-medium hover:text-blue-500">
+        <Link to="/login" className="text-blue-600 dark:text-blue-400 font-medium hover:text-blue-500 dark:hover:text-blue-300 transition-colors duration-200">
           Click here to login now
         </Link>
       </div>
@@ -66,7 +66,7 @@ export function ResetPasswordPage() {
 
   return (
     <div>
-      <h2 className="text-2xl font-bold text-slate-900 mb-6 text-center">Set New Password</h2>
+      <h2 className="text-2xl font-bold text-slate-900 dark:text-white mb-6 text-center transition-colors duration-200">Set New Password</h2>
       
       <form onSubmit={handleSubmit} className="space-y-4">
         <ErrorMessage message={error} />

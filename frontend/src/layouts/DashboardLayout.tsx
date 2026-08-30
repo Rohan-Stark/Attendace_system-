@@ -1,6 +1,7 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { ClipboardList, CalendarDays, ScanFace, BarChart3 } from 'lucide-react';
+import { ClipboardList, CalendarDays, ScanFace, BarChart3, LogOut, KeyRound } from 'lucide-react';
+import { ThemeToggle } from '../components/ui/ThemeToggle';
 
 interface NavItem {
   name: string;
@@ -54,32 +55,38 @@ export function DashboardLayout() {
   const navItems = getNavItems();
 
   return (
-    <div className="min-h-screen bg-slate-50 flex">
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-950 flex transition-colors duration-200">
       {/* Sidebar */}
-      <div className="w-64 bg-slate-900 text-white flex flex-col shrink-0 dashboard-layout-sidebar">
-        <div className="h-16 flex items-center px-6 border-b border-slate-800">
-          <h1 className="text-xl font-bold tracking-tight">Smart<span className="text-blue-400">Attend</span></h1>
+      <div className="w-64 bg-slate-900 dark:bg-slate-950 text-white flex flex-col shrink-0 dashboard-layout-sidebar border-r border-slate-800 dark:border-slate-800/50 transition-colors duration-200">
+        <div className="h-16 flex items-center px-6 border-b border-slate-800 dark:border-slate-800/50">
+          <h1 className="text-xl font-bold tracking-tight">Smart<span className="text-blue-500">Attend</span></h1>
         </div>
         <nav className="flex-1 px-4 py-6 space-y-1">
           {navItems.map((item) => (
             <NavLink
               key={item.name}
               to={item.href}
-              end={item.href === '/admin' || item.href === '/hod' || item.href === '/teacher' || item.href === '/student'}
+              end={item.href === (user?.role === 'hod' ? '/hod' : user?.role === 'teacher' ? '/teacher' : user?.role === 'student' ? '/student' : '/admin')}
               className={({ isActive }) =>
-                `flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-colors ${
+                `flex items-center px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${
                   isActive
-                    ? 'bg-blue-600 text-white'
-                    : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-blue-600/10 text-blue-500 dark:text-blue-400'
+                    : 'text-slate-400 hover:bg-slate-800/50 hover:text-slate-200 dark:text-slate-500 dark:hover:text-slate-300'
                 }`
               }
             >
-              {item.icon}
-              <span className="ml-3">{item.name}</span>
+              {({ isActive }) => (
+                <>
+                  <div className={`flex-shrink-0 ${isActive ? 'text-blue-500 dark:text-blue-400' : 'text-slate-500 dark:text-slate-600'}`}>
+                    {item.icon}
+                  </div>
+                  <span className="ml-3">{item.name}</span>
+                </>
+              )}
             </NavLink>
           ))}
         </nav>
-        <div className="p-4 border-t border-slate-800">
+        <div className="p-4 border-t border-slate-800 dark:border-slate-800/50">
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <div className="h-8 w-8 rounded-full bg-slate-700 flex items-center justify-center font-semibold text-sm">
@@ -96,7 +103,7 @@ export function DashboardLayout() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 dashboard-layout-main">
-        <header className="h-16 bg-white border-b border-slate-200 flex items-center justify-between px-8 shrink-0 shadow-sm z-10 dashboard-layout-header">
+        <header className="h-16 bg-white/80 dark:bg-slate-900/80 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 flex items-center justify-between px-8 shrink-0 shadow-sm z-10 dashboard-layout-header transition-colors duration-200">
           <div className="flex items-center">
              {user?.department_id && (
                <span className="text-sm font-medium text-slate-500 bg-slate-100 px-3 py-1 rounded-full">
@@ -104,19 +111,26 @@ export function DashboardLayout() {
                </span>
              )}
           </div>
-          <div className="flex items-center space-x-4">
-             <NavLink to="/change-password" className="text-sm font-medium text-slate-600 hover:text-blue-600 transition-colors">
-               Change Password
+          <div className="flex items-center space-x-3">
+             <ThemeToggle />
+             <div className="h-6 w-px bg-slate-200 dark:bg-slate-700 mx-2"></div>
+             <NavLink 
+               to="/change-password" 
+               className="p-2 rounded-lg text-slate-500 hover:bg-slate-100 dark:text-slate-400 dark:hover:bg-slate-800 transition-colors focus:outline-none focus:ring-2 focus:ring-primary"
+               title="Change Password"
+             >
+               <KeyRound className="w-5 h-5" />
              </NavLink>
              <button
                onClick={handleLogout}
-               className="text-sm font-medium text-red-600 hover:text-red-700 transition-colors bg-red-50 hover:bg-red-100 px-3 py-1.5 rounded-lg"
+               className="p-2 rounded-lg text-red-500 hover:bg-red-50 dark:text-red-400 dark:hover:bg-red-900/20 transition-colors focus:outline-none focus:ring-2 focus:ring-red-500"
+               title="Logout"
              >
-               Logout
+               <LogOut className="w-5 h-5" />
              </button>
           </div>
         </header>
-        <main className="flex-1 overflow-y-auto p-8">
+        <main className="flex-1 overflow-y-auto p-8 text-slate-900 dark:text-slate-100 transition-colors duration-200">
           <div className="max-w-7xl mx-auto">
             <Outlet />
           </div>

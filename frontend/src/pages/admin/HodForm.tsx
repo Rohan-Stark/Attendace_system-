@@ -61,13 +61,13 @@ export function HodForm({ isOpen, onClose, hod, departments }: HodFormProps) {
     return (
       <Modal isOpen={isOpen} onClose={() => onClose(true)} title="HOD Created Successfully">
         <div className="space-y-4">
-          <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
-            <h4 className="font-semibold text-amber-800 mb-2">Important!</h4>
-            <p className="text-sm text-amber-700 mb-2">
+          <div className="p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg transition-colors duration-200">
+            <h4 className="font-semibold text-amber-800 dark:text-amber-300 mb-2">Important!</h4>
+            <p className="text-sm text-amber-700 dark:text-amber-400 mb-2">
               Please copy the temporary password below and securely share it with the new HOD.
               It will only be displayed <strong>once</strong>.
             </p>
-            <div className="bg-white p-3 rounded border font-mono text-center text-lg select-all">
+            <div className="bg-white dark:bg-slate-950 p-3 rounded border border-slate-200 dark:border-slate-800 font-mono text-center text-lg select-all text-slate-900 dark:text-slate-100 transition-colors duration-200">
               {tempPassword}
             </div>
           </div>
@@ -101,9 +101,9 @@ export function HodForm({ isOpen, onClose, hod, departments }: HodFormProps) {
         />
         
         <div className="flex flex-col space-y-1.5">
-          <label className="text-sm font-medium text-slate-700">Department</label>
+          <label className="text-sm font-medium text-slate-700 dark:text-slate-300 transition-colors duration-200">Department</label>
           <select
-            className="px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            className="px-3 py-2 border border-slate-300 dark:border-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white transition-colors duration-200"
             value={departmentId}
             onChange={(e) => setDepartmentId(e.target.value)}
             required

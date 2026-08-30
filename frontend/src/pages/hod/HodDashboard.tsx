@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/Card';
 import { getTeachers, getStudents } from '../../services/hod.service';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
+import { BookOpen, Users } from 'lucide-react';
 
 export function HodDashboard() {
   const [stats, setStats] = useState({ teachers: 0, students: 0 });
@@ -28,25 +29,27 @@ export function HodDashboard() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-slate-900 mb-6">HOD Dashboard</h1>
+      <h1 className="text-2xl font-bold text-slate-900 dark:text-white mb-6 transition-colors duration-200">HOD Dashboard</h1>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Teachers</CardTitle>
+        <Card className="hover:shadow-md transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-slate-500 dark:text-slate-400">Total Teachers</CardTitle>
+            <BookOpen className="w-5 h-5 text-blue-500 dark:text-blue-400 opacity-75" />
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-bold text-blue-600">{stats.teachers}</div>
-            <p className="text-slate-500 mt-2 text-sm">Total teachers in department</p>
+            <div className="text-4xl font-bold text-slate-900 dark:text-white">{stats.teachers}</div>
+            <p className="text-slate-500 dark:text-slate-400 mt-2 text-sm transition-colors duration-200">Active teachers in department</p>
           </CardContent>
         </Card>
         
-        <Card>
-          <CardHeader>
-            <CardTitle>Students</CardTitle>
+        <Card className="hover:shadow-md transition-shadow">
+          <CardHeader className="flex flex-row items-center justify-between pb-2">
+            <CardTitle className="text-sm font-medium text-slate-500 dark:text-slate-400">Total Students</CardTitle>
+            <Users className="w-5 h-5 text-emerald-500 dark:text-emerald-400 opacity-75" />
           </CardHeader>
           <CardContent>
-            <div className="text-4xl font-bold text-emerald-600">{stats.students}</div>
-            <p className="text-slate-500 mt-2 text-sm">Total students in department</p>
+            <div className="text-4xl font-bold text-slate-900 dark:text-white">{stats.students}</div>
+            <p className="text-slate-500 dark:text-slate-400 mt-2 text-sm transition-colors duration-200">Enrolled in department</p>
           </CardContent>
         </Card>
       </div>

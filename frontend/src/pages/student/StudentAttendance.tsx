@@ -68,18 +68,18 @@ export function StudentAttendance() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 flex items-center gap-2">
-            <CalendarDays className="w-7 h-7 text-emerald-600" />
+          <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2 transition-colors duration-200">
+            <CalendarDays className="w-7 h-7 text-emerald-600 dark:text-emerald-400" />
             My Attendance
           </h1>
-          <p className="text-slate-500 mt-1">View your submitted attendance history</p>
+          <p className="text-slate-500 dark:text-slate-400 mt-1 transition-colors duration-200">View your submitted attendance history</p>
         </div>
         
         <div className="flex items-center gap-2 hide-on-print">
-          <Button variant="outline" size="sm" onClick={handleExportCsv} disabled={isExporting || loading || !analytics} className="bg-white">
+          <Button variant="outline" size="sm" onClick={handleExportCsv} disabled={isExporting || loading || !analytics} className="bg-white dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 transition-colors duration-200">
             <FileText className="w-4 h-4 mr-2" /> CSV
           </Button>
-          <Button variant="outline" size="sm" onClick={handleExportPdf} disabled={isExporting || loading || !analytics} className="bg-white">
+          <Button variant="outline" size="sm" onClick={handleExportPdf} disabled={isExporting || loading || !analytics} className="bg-white dark:bg-slate-900 dark:text-slate-300 dark:border-slate-700 transition-colors duration-200">
             <Download className="w-4 h-4 mr-2" /> PDF
           </Button>
           <Button variant="secondary" size="sm" onClick={handlePrint} disabled={loading || !analytics}>
@@ -99,12 +99,12 @@ export function StudentAttendance() {
             <Card>
               <CardContent className="p-5">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-blue-100 rounded-lg">
-                    <BarChart3 className="w-5 h-5 text-blue-600" />
+                  <div className="p-2 bg-blue-100 dark:bg-blue-900/30 rounded-lg transition-colors duration-200">
+                    <BarChart3 className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-slate-900">{totalCount}</p>
-                    <p className="text-xs text-slate-500 font-medium">Total Sessions</p>
+                    <p className="text-2xl font-bold text-slate-900 dark:text-white transition-colors duration-200">{totalCount}</p>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 font-medium transition-colors duration-200">Total Sessions</p>
                   </div>
                 </div>
               </CardContent>
@@ -112,12 +112,12 @@ export function StudentAttendance() {
             <Card>
               <CardContent className="p-5">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-emerald-100 rounded-lg">
-                    <CheckCircle2 className="w-5 h-5 text-emerald-600" />
+                  <div className="p-2 bg-emerald-100 dark:bg-emerald-900/30 rounded-lg transition-colors duration-200">
+                    <CheckCircle2 className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-emerald-700">{presentCount}</p>
-                    <p className="text-xs text-emerald-600 font-medium">Present</p>
+                    <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-400 transition-colors duration-200">{presentCount}</p>
+                    <p className="text-xs text-emerald-600 dark:text-emerald-500 font-medium transition-colors duration-200">Present</p>
                   </div>
                 </div>
               </CardContent>
@@ -125,12 +125,12 @@ export function StudentAttendance() {
             <Card>
               <CardContent className="p-5">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-violet-100 rounded-lg">
-                    <CalendarDays className="w-5 h-5 text-violet-600" />
+                  <div className="p-2 bg-violet-100 dark:bg-violet-900/30 rounded-lg transition-colors duration-200">
+                    <CalendarDays className="w-5 h-5 text-violet-600 dark:text-violet-400" />
                   </div>
                   <div>
-                    <p className="text-2xl font-bold text-violet-700">{percentage}%</p>
-                    <p className="text-xs text-violet-600 font-medium">Attendance Rate</p>
+                    <p className="text-2xl font-bold text-violet-700 dark:text-violet-400 transition-colors duration-200">{percentage}%</p>
+                    <p className="text-xs text-violet-600 dark:text-violet-500 font-medium transition-colors duration-200">Attendance Rate</p>
                   </div>
                 </div>
               </CardContent>
@@ -191,12 +191,12 @@ export function StudentAttendance() {
               </CardContent>
             </Card>
           ) : (
-            <Card className="border-dashed border-2 border-slate-300">
+            <Card className="border-dashed border-2 border-slate-300 dark:border-slate-700 transition-colors duration-200">
               <CardContent>
                 <div className="text-center py-8">
-                  <CalendarDays className="w-12 h-12 text-slate-400 mx-auto mb-3" />
-                  <h3 className="text-lg font-semibold text-slate-700">No Attendance Records</h3>
-                  <p className="text-sm text-slate-500">
+                  <CalendarDays className="w-12 h-12 text-slate-400 dark:text-slate-500 mx-auto mb-3 transition-colors duration-200" />
+                  <h3 className="text-lg font-semibold text-slate-700 dark:text-slate-300 transition-colors duration-200">No Attendance Records</h3>
+                  <p className="text-sm text-slate-500 dark:text-slate-400 transition-colors duration-200">
                     Your attendance history will appear here once sessions are submitted by your teachers.
                   </p>
                 </div>
