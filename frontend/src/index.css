@@ -1,0 +1,147 @@
+@import "tailwindcss";
+
+/* ── Design Tokens ── */
+:root {
+  --color-primary: #2563eb;
+  --color-primary-hover: #1d4ed8;
+  --color-primary-light: #dbeafe;
+  --color-danger: #dc2626;
+  --color-danger-hover: #b91c1c;
+  --color-success: #16a34a;
+  --color-warning: #d97706;
+  
+  /* Light Mode Variables */
+  --color-surface: #ffffff;
+  --color-surface-secondary: #f8fafc;
+  --color-surface-tertiary: #f1f5f9;
+  --color-border: #e2e8f0;
+  --color-border-hover: #cbd5e1;
+  --color-text: #0f172a;
+  --color-text-secondary: #64748b;
+  --color-text-muted: #94a3b8;
+  
+  --color-sidebar-bg: #0f172a;
+  --color-sidebar-text: #cbd5e1;
+  --color-sidebar-active: #1e293b;
+  --color-sidebar-hover: #1e293b;
+  --color-sidebar-border: #1e293b;
+
+  --color-glass-bg: rgba(255, 255, 255, 0.7);
+  --color-glass-border: rgba(255, 255, 255, 0.5);
+  
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+}
+
+.dark {
+  /* Dark Mode Variables */
+  --color-surface: #0f172a; /* slate-900 */
+  --color-surface-secondary: #020617; /* slate-950 */
+  --color-surface-tertiary: #1e293b; /* slate-800 */
+  --color-border: #334155; /* slate-700 */
+  --color-border-hover: #475569; /* slate-600 */
+  --color-text: #f8fafc; /* slate-50 */
+  --color-text-secondary: #cbd5e1; /* slate-300 */
+  --color-text-muted: #94a3b8; /* slate-400 */
+
+  --color-sidebar-bg: #020617;
+  --color-sidebar-text: #cbd5e1;
+  --color-sidebar-active: #1e293b;
+  --color-sidebar-hover: #1e293b;
+  --color-sidebar-border: #1e293b;
+
+  --color-glass-bg: rgba(15, 23, 42, 0.7);
+  --color-glass-border: rgba(30, 41, 59, 0.5);
+
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.5);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.4);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.4), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+}
+
+/* ── Tailwind v4 Theme Variables overrides ── */
+@theme {
+  --color-primary: var(--color-primary);
+  --color-primary-hover: var(--color-primary-hover);
+  --color-primary-light: var(--color-primary-light);
+  --color-danger: var(--color-danger);
+  --color-danger-hover: var(--color-danger-hover);
+  --color-success: var(--color-success);
+  --color-warning: var(--color-warning);
+  --color-surface: var(--color-surface);
+  --color-surface-secondary: var(--color-surface-secondary);
+  --color-surface-tertiary: var(--color-surface-tertiary);
+  --color-border: var(--color-border);
+  --color-border-hover: var(--color-border-hover);
+  --color-text: var(--color-text);
+  --color-text-secondary: var(--color-text-secondary);
+  --color-text-muted: var(--color-text-muted);
+  --color-sidebar-bg: var(--color-sidebar-bg);
+  --color-sidebar-text: var(--color-sidebar-text);
+  --color-sidebar-active: var(--color-sidebar-active);
+  --color-sidebar-hover: var(--color-sidebar-hover);
+  --color-sidebar-border: var(--color-sidebar-border);
+}
+
+/* ── Base ── */
+body {
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  color: var(--color-text);
+  background-color: var(--color-surface-secondary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ── Focus ring utility ── */
+*:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* ── Scrollbar (subtle) ── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-border-hover); }
+
+/* Glass Effect Utility */
+.glass-panel {
+  background-color: var(--color-glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--color-glass-border);
+}
+
+/* ── Print Styles ── */
+@media print {
+  /* Enforce light theme properties directly to avoid black backgrounds */
+  :root, .dark {
+    --color-surface: #ffffff !important;
+    --color-surface-secondary: #ffffff !important;
+    --color-text: #000000 !important;
+    --color-text-secondary: #333333 !important;
+    --color-border: #cccccc !important;
+  }
+  
+  body { 
+    background-color: white !important; 
+    color: black !important;
+  }
+  
+  .hide-on-print { display: none !important; }
+  .dashboard-layout-sidebar { display: none !important; }
+  .dashboard-layout-header { display: none !important; }
+  .dashboard-layout-main { 
+    margin: 0 !important; 
+    padding: 0 !important; 
+    width: 100% !important; 
+    overflow: visible !important; 
+  }
+  .print-break-inside-avoid { break-inside: avoid; }
+  
+  /* Ensure shadows and backgrounds are removed for print clarity */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+}
