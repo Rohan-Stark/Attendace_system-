@@ -1,4 +1,4 @@
-import { get, post, patch } from '../lib/api-client';
+import { get, post, patch, del } from '../lib/api-client';
 import type {
   Department, DepartmentCreate, DepartmentUpdate,
   HODResponse, HODCreate, HODUpdate, HODCreationResponse,
@@ -42,4 +42,8 @@ export function updateHod(id: number, data: HODUpdate): Promise<HODResponse> {
 
 export function deactivateHod(id: number): Promise<{ message: string }> {
   return post<{ message: string }>(`/admin/hods/${id}/deactivate`);
+}
+
+export function removeHod(id: number): Promise<{ message: string }> {
+  return del<{ message: string }>(`/admin/hods/${id}`);
 }

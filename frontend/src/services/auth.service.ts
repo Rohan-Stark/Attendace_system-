@@ -24,3 +24,7 @@ export function resetPassword(token: string, new_password: string): Promise<{ me
 export function logout(): Promise<{ message: string }> {
   return post<{ message: string }>('/auth/logout');
 }
+
+export function firstTimeSignup(data: any): Promise<{ message: string }> {
+  return post<{ message: string }>('/auth/first-time-signup', data);
+}

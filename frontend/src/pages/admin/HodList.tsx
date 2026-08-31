@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Button } from '../../components/ui/Button';
 import { Table, Thead, Tbody, Tr, Th, Td } from '../../components/ui/Table';
 import { StatusBadge } from '../../components/ui/StatusBadge';
-import { getHods, getDepartments, deactivateHod } from '../../services/admin.service';
+import { getHods, getDepartments, deactivateHod, removeHod } from '../../services/admin.service';
 import type { HODResponse, Department } from '../../types/api';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
@@ -18,6 +18,9 @@ export function HodList() {
   
   const [deactivateDialog, setDeactivateDialog] = useState<{ isOpen: boolean; id: number | null }>({ isOpen: false, id: null });
   const [isDeactivating, setIsDeactivating] = useState(false);
+
+  const [removeDialog, setRemoveDialog] = useState<{ isOpen: boolean; hod: HODResponse | null }>({ isOpen: false, hod: null });
+  const [isRemoving, setIsRemoving] = useState(false);
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -66,6 +69,20 @@ export function HodList() {
     }
   };
 
+  const handleRemoveConfirm = async () => {
+    if (!removeDialog.hod) return;
+    setIsRemoving(true);
+    try {
+      await removeHod(removeDialog.hod.id);
+      fetchData();
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsRemoving(false);
+      setRemoveDialog({ isOpen: false, hod: null });
+    }
+  };
+
   const getDeptName = (deptId: number) => {
     const dept = departments.find((d) => d.id === deptId);
     return dept ? dept.name : `ID: ${deptId}`;
@@ -106,12 +123,20 @@ export function HodList() {
                     <Button 
                       variant="ghost" 
                       size="sm" 
-                      className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                      className="text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300"
                       onClick={() => setDeactivateDialog({ isOpen: true, id: hod.id })}
                     >
                       Deactivate
                     </Button>
                   )}
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
+                    onClick={() => setRemoveDialog({ isOpen: true, hod })}
+                  >
+                    Remove
+                  </Button>
                 </div>
               </Td>
             </Tr>
@@ -140,6 +165,17 @@ export function HodList() {
         isLoading={isDeactivating}
         onCancel={() => setDeactivateDialog({ isOpen: false, id: null })}
         onConfirm={handleDeactivateConfirm}
+      />
+
+      <ConfirmDialog
+        isOpen={removeDialog.isOpen}
+        title="Remove HOD?"
+        message={`Name: ${removeDialog.hod?.name || '-'}\nEmail: ${removeDialog.hod?.email}\n\nThis will permanently delete the HOD account. This action cannot be undone.`}
+        confirmLabel="Remove Permanently"
+        isDestructive
+        isLoading={isRemoving}
+        onCancel={() => setRemoveDialog({ isOpen: false, hod: null })}
+        onConfirm={handleRemoveConfirm}
       />
     </div>
   );

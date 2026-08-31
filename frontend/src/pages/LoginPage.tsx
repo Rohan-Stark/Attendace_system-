@@ -72,6 +72,13 @@ export function LoginPage() {
         <Button type="submit" className="w-full" isLoading={isLoading}>
           Sign in
         </Button>
+
+        <div className="text-center mt-4 text-sm">
+          <span className="text-slate-600 dark:text-slate-400">First time using SmartAttend? </span>
+          <Link to="/signup" className="font-medium text-blue-600 hover:text-blue-500">
+            Sign Up
+          </Link>
+        </div>
       </form>
     </div>
   );
