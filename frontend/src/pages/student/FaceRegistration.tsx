@@ -1,4 +1,4 @@
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
@@ -23,10 +23,15 @@ export function FaceRegistration() {
         video: { width: 1280, height: 720, facingMode: 'user' },
         audio: false,
       });
+      streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        try {
+          await videoRef.current.play();
+        } catch (err) {
+          console.error("Autoplay failed:", err);
+        }
       }
-      streamRef.current = stream;
       setIsCameraActive(true);
     } catch (err: any) {
       setError('Could not access camera. Please grant permissions.');
@@ -103,8 +108,24 @@ export function FaceRegistration() {
     }
   };
 
+  // Sync stream to video element when camera becomes active
+  useEffect(() => {
+    const setupVideo = async () => {
+      if (isCameraActive && videoRef.current && streamRef.current) {
+        videoRef.current.srcObject = streamRef.current;
+        try {
+          await videoRef.current.play();
+        } catch (err) {
+          console.error("Autoplay failed:", err);
+          setError("Failed to start video playback. Please check your browser settings.");
+        }
+      }
+    };
+    setupVideo();
+  }, [isCameraActive]);
+
   // Cleanup on unmount
-  useCallback(() => {
+  useEffect(() => {
     return () => stopCamera();
   }, [stopCamera]);
 

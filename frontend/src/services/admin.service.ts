@@ -44,6 +44,14 @@ export function deactivateHod(id: number): Promise<{ message: string }> {
   return post<{ message: string }>(`/admin/hods/${id}/deactivate`);
 }
 
+export function activateHod(id: number): Promise<{ message: string }> {
+  return post<{ message: string }>(`/admin/hods/${id}/activate`);
+}
+
 export function removeHod(id: number): Promise<{ message: string }> {
   return del<{ message: string }>(`/admin/hods/${id}`);
+}
+
+export function resetHodPassword(id: number): Promise<{ message: string; temporary_password: string }> {
+  return post<{ message: string; temporary_password: string }>(`/admin/hods/${id}/reset-password`);
 }

@@ -70,10 +70,29 @@ export function AttendanceSession() {
   useEffect(() => {
     return () => {
       if (streamRef.current) {
-        streamRef.current.getTracks().forEach((t) => t.stop());
+        streamRef.current.getTracks().forEach((t) => {
+          t.stop();
+        });
+        streamRef.current = null;
       }
     };
   }, []);
+
+  // Sync stream to video element when modal opens
+  useEffect(() => {
+    const setupVideo = async () => {
+      if (showCamera && videoRef.current && streamRef.current) {
+        videoRef.current.srcObject = streamRef.current;
+        try {
+          await videoRef.current.play();
+        } catch (err) {
+          console.error("Autoplay failed:", err);
+          setError("Failed to start video playback. Please check your browser settings.");
+        }
+      }
+    };
+    setupVideo();
+  }, [showCamera]);
 
   const handleToggleStatus = async (record: AttendanceRecord) => {
     if (!session) return;
@@ -119,8 +138,15 @@ export function AttendanceSession() {
         video: { facingMode: 'environment', width: { ideal: 1280 }, height: { ideal: 720 } },
       });
       streamRef.current = stream;
+      
+      // If video exists, assign it immediately (it typically won't exist yet because modal is hidden)
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
+        try {
+          await videoRef.current.play();
+        } catch (err) {
+          console.error("Autoplay failed:", err);
+        }
       }
       setShowCamera(true);
     } catch {

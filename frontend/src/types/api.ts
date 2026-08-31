@@ -56,6 +56,7 @@ export interface HODCreate {
 
 export interface HODUpdate {
   name?: string;
+  email?: string;
   department_id?: number;
   is_active?: boolean;
 }

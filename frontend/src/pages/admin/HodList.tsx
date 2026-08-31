@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import { Button } from '../../components/ui/Button';
 import { Table, Thead, Tbody, Tr, Th, Td } from '../../components/ui/Table';
 import { StatusBadge } from '../../components/ui/StatusBadge';
-import { getHods, getDepartments, deactivateHod, removeHod } from '../../services/admin.service';
+import { getHods, getDepartments, removeHod, resetHodPassword } from '../../services/admin.service';
 import type { HODResponse, Department } from '../../types/api';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
+import { Modal } from '../../components/ui/Modal';
 import { HodForm } from './HodForm';
 
 export function HodList() {
@@ -16,11 +17,14 @@ export function HodList() {
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingHod, setEditingHod] = useState<HODResponse | null>(null);
   
-  const [deactivateDialog, setDeactivateDialog] = useState<{ isOpen: boolean; id: number | null }>({ isOpen: false, id: null });
-  const [isDeactivating, setIsDeactivating] = useState(false);
+
 
   const [removeDialog, setRemoveDialog] = useState<{ isOpen: boolean; hod: HODResponse | null }>({ isOpen: false, hod: null });
   const [isRemoving, setIsRemoving] = useState(false);
+
+  const [resetDialog, setResetDialog] = useState<{ isOpen: boolean; hod: HODResponse | null }>({ isOpen: false, hod: null });
+  const [isResetting, setIsResetting] = useState(false);
+  const [resetSuccessData, setResetSuccessData] = useState<{ isOpen: boolean; tempPassword: string }>({ isOpen: false, tempPassword: '' });
 
   const fetchData = async () => {
     setIsLoading(true);
@@ -55,19 +59,7 @@ export function HodList() {
     if (didChange) fetchData();
   };
 
-  const handleDeactivateConfirm = async () => {
-    if (!deactivateDialog.id) return;
-    setIsDeactivating(true);
-    try {
-      await deactivateHod(deactivateDialog.id);
-      fetchData();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsDeactivating(false);
-      setDeactivateDialog({ isOpen: false, id: null });
-    }
-  };
+
 
   const handleRemoveConfirm = async () => {
     if (!removeDialog.hod) return;
@@ -80,6 +72,20 @@ export function HodList() {
     } finally {
       setIsRemoving(false);
       setRemoveDialog({ isOpen: false, hod: null });
+    }
+  };
+
+  const handleResetConfirm = async () => {
+    if (!resetDialog.hod) return;
+    setIsResetting(true);
+    try {
+      const res = await resetHodPassword(resetDialog.hod.id);
+      setResetSuccessData({ isOpen: true, tempPassword: res.temporary_password });
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsResetting(false);
+      setResetDialog({ isOpen: false, hod: null });
     }
   };
 
@@ -119,16 +125,14 @@ export function HodList() {
                   <Button variant="ghost" size="sm" onClick={() => handleEdit(hod)}>
                     Edit
                   </Button>
-                  {hod.is_active && (
-                    <Button 
-                      variant="ghost" 
-                      size="sm" 
-                      className="text-orange-600 hover:text-orange-700 dark:text-orange-400 dark:hover:text-orange-300"
-                      onClick={() => setDeactivateDialog({ isOpen: true, id: hod.id })}
-                    >
-                      Deactivate
-                    </Button>
-                  )}
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    className="text-blue-600 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                    onClick={() => setResetDialog({ isOpen: true, hod })}
+                  >
+                    Reset Password
+                  </Button>
                   <Button 
                     variant="ghost" 
                     size="sm" 
@@ -156,16 +160,7 @@ export function HodList() {
         departments={departments}
       />
 
-      <ConfirmDialog
-        isOpen={deactivateDialog.isOpen}
-        title="Deactivate HOD"
-        message="Are you sure you want to deactivate this HOD? They will no longer be able to log in. This action can only be undone via direct database access."
-        confirmLabel="Deactivate"
-        isDestructive
-        isLoading={isDeactivating}
-        onCancel={() => setDeactivateDialog({ isOpen: false, id: null })}
-        onConfirm={handleDeactivateConfirm}
-      />
+
 
       <ConfirmDialog
         isOpen={removeDialog.isOpen}
@@ -177,6 +172,35 @@ export function HodList() {
         onCancel={() => setRemoveDialog({ isOpen: false, hod: null })}
         onConfirm={handleRemoveConfirm}
       />
+
+      <ConfirmDialog
+        isOpen={resetDialog.isOpen}
+        title="Reset HOD Password"
+        message={`You are about to reset the password for:\n\nName: ${resetDialog.hod?.name || '-'}\nEmail: ${resetDialog.hod?.email}\n\nThe existing password will become invalid.\nA temporary password will be generated.\nThe HOD will be required to create a new password after the next login.`}
+        confirmLabel="Reset Password"
+        isDestructive={false}
+        isLoading={isResetting}
+        onCancel={() => setResetDialog({ isOpen: false, hod: null })}
+        onConfirm={handleResetConfirm}
+      />
+
+      <Modal isOpen={resetSuccessData.isOpen} onClose={() => setResetSuccessData({ isOpen: false, tempPassword: '' })} title="Password Reset Successfully">
+        <div className="space-y-4">
+          <div className="p-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg transition-colors duration-200">
+            <h4 className="font-semibold text-amber-800 dark:text-amber-300 mb-2">Important!</h4>
+            <p className="text-sm text-amber-700 dark:text-amber-400 mb-2">
+              Please copy the temporary password below and securely share it with the HOD.
+              It will only be displayed <strong>once</strong>.
+            </p>
+            <div className="bg-white dark:bg-slate-950 p-3 rounded border border-slate-200 dark:border-slate-800 font-mono text-center text-lg select-all text-slate-900 dark:text-slate-100 transition-colors duration-200">
+              {resetSuccessData.tempPassword}
+            </div>
+          </div>
+          <div className="flex justify-end">
+            <Button onClick={() => setResetSuccessData({ isOpen: false, tempPassword: '' })}>Done</Button>
+          </div>
+        </div>
+      </Modal>
     </div>
   );
 }
