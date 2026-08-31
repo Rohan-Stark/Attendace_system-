@@ -1,14 +1,14 @@
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional
 from datetime import datetime
 
 class TeacherCreate(BaseModel):
-    employee_id: str
-    name: str
+    employee_id: str = Field(..., max_length=50)
+    name: str = Field(..., max_length=150)
 
 class TeacherUpdate(BaseModel):
-    name: Optional[str] = None
-    employee_id: Optional[str] = None
+    name: Optional[str] = Field(None, max_length=150)
+    employee_id: Optional[str] = Field(None, max_length=50)
     is_active: Optional[bool] = None
 
 class TeacherProfileResponse(BaseModel):

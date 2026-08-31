@@ -17,7 +17,6 @@ class FaceService:
     def __new__(cls):
         if cls._instance is None:
             cls._instance = super(FaceService, cls).__new__(cls)
-            cls._instance._initialize_model()
         return cls._instance
 
     def _initialize_model(self):
@@ -36,6 +35,11 @@ class FaceService:
             logger.error(f"Failed to initialize face model: {e}")
             raise FaceRecognitionError(f"Model initialization failed: {e}")
 
+    def _get_model(self):
+        if self._model is None:
+            self._initialize_model()
+        return self._model
+
     def _decode_image(self, image_bytes: bytes) -> np.ndarray:
         try:
             nparr = np.frombuffer(image_bytes, np.uint8)
@@ -53,7 +57,7 @@ class FaceService:
         """
         img = self._decode_image(image_bytes)
         try:
-            faces = self._model.get(img)
+            faces = self._get_model().get(img)
             results = []
             for face in faces:
                 results.append({

@@ -18,7 +18,7 @@ class AttendanceDispute(TimestampMixin, Base):
     status = Column(Enum(DisputeStatus), default=DisputeStatus.pending, nullable=False, index=True)
     
     resolved_at = Column(DateTime(timezone=True), nullable=True)
-    resolved_by = Column(Integer, ForeignKey("users.id"), nullable=True)
+    resolved_by = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     resolution_comment = Column(String(500), nullable=True)
 
     attendance_record = relationship("AttendanceRecord", back_populates="disputes")

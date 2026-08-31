@@ -13,12 +13,18 @@ from app.models.user import User
 from app.models.password_reset import PasswordResetToken
 from app.schemas.auth import (
     LoginRequest, LoginResponse, ChangePasswordRequest, 
-    ForgotPasswordRequest, ResetPasswordRequest, UserMeResponse
+    ForgotPasswordRequest, ResetPasswordRequest, UserMeResponse,
+    FirstTimeSignupRequest
 )
+from app.core.rate_limit import RateLimiter
+
+login_limiter = RateLimiter(max_requests=5, window_seconds=60)
+forgot_password_limiter = RateLimiter(max_requests=3, window_seconds=600)
+reset_password_limiter = RateLimiter(max_requests=5, window_seconds=300)
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 
-@router.post("/login", response_model=LoginResponse)
+@router.post("/login", response_model=LoginResponse, dependencies=[Depends(login_limiter)])
 def login(request: LoginRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == request.login_id).first()
     if not user or not verify_password(request.password, user.password_hash):
@@ -38,6 +44,26 @@ def login(request: LoginRequest, db: Session = Depends(get_db)):
         user_id=user.id
     )
 
+@router.post("/first-time-signup", dependencies=[Depends(login_limiter)])
+def first_time_signup(request: FirstTimeSignupRequest, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.email == request.login_id).first()
+    if not user or not verify_password(request.initial_password, user.password_hash):
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid initial credentials")
+    
+    if not user.is_active:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Inactive user")
+        
+    if not user.must_change_password:
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Account already registered. Please log in.")
+        
+    if not is_valid_password_policy(request.new_password):
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Password does not meet policy requirements")
+        
+    user.password_hash = get_password_hash(request.new_password)
+    user.must_change_password = False
+    db.commit()
+    return {"message": "Account registered successfully."}
+
 @router.post("/change-password")
 def change_password(request: ChangePasswordRequest, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     # Note: Using get_current_user allows users with must_change_password=True to access this
@@ -52,7 +78,7 @@ def change_password(request: ChangePasswordRequest, db: Session = Depends(get_db
     db.commit()
     return {"message": "Password updated successfully"}
 
-@router.post("/forgot-password")
+@router.post("/forgot-password", dependencies=[Depends(forgot_password_limiter)])
 def forgot_password(request: ForgotPasswordRequest, db: Session = Depends(get_db)):
     user = db.query(User).filter(User.email == request.login_id).first()
     
@@ -74,7 +100,7 @@ def forgot_password(request: ForgotPasswordRequest, db: Session = Depends(get_db
     # Always return same response to prevent account enumeration
     return {"message": "If the account exists, password reset instructions have been initiated."}
 
-@router.post("/reset-password")
+@router.post("/reset-password", dependencies=[Depends(reset_password_limiter)])
 def reset_password(request: ResetPasswordRequest, db: Session = Depends(get_db)):
     token_hash = hash_reset_token(request.token)
     

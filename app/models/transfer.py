@@ -14,7 +14,7 @@ class StudentTransfer(TimestampMixin, Base):
     from_section = Column(String(10), nullable=False)
     to_section = Column(String(10), nullable=False)
     transferred_at = Column(DateTime(timezone=True), default=func.now(), nullable=False)
-    transferred_by = Column(Integer, ForeignKey("users.id"), nullable=False)
+    transferred_by = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True)
     reason = Column(String(500), nullable=True)
 
     student = relationship("StudentProfile", back_populates="transfers")

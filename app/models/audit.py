@@ -6,7 +6,7 @@ class AuditLog(TimestampMixin, Base):
     __tablename__ = "audit_logs"
 
     id = Column(Integer, primary_key=True, index=True)
-    actor_user_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    actor_user_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
     action = Column(String(100), nullable=False) # e.g. "update_attendance", "branch_transfer"
     entity_type = Column(String(100), nullable=False, index=True) # e.g. "AttendanceRecord"
     entity_id = Column(String(100), nullable=False, index=True)

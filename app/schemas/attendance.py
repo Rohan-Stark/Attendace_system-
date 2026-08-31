@@ -1,7 +1,7 @@
 """
 Pydantic schemas for attendance session and records.
 """
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 from typing import Optional
 from datetime import datetime, date
 
@@ -10,8 +10,8 @@ from datetime import datetime, date
 
 class AttendanceSessionCreate(BaseModel):
     """Teacher provides the class context to start a session."""
-    semester: int
-    section: str
+    semester: int = Field(..., ge=1, le=10)
+    section: str = Field(..., max_length=10)
 
 
 class AttendanceSessionResponse(BaseModel):
@@ -53,7 +53,7 @@ class AttendanceRecordResponse(BaseModel):
 
 class AttendanceRecordUpdate(BaseModel):
     """Teacher manually marks a student present or absent."""
-    status: str  # "present" or "absent"
+    status: str = Field(..., pattern=r"^(present|absent)$")  # "present" or "absent"
 
 
 # ── Student View ──

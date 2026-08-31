@@ -79,6 +79,7 @@ def create_hod(request: HODCreate, db: Session = Depends(get_db), current_user: 
     
     hod = User(
         email=request.email,
+        full_name=request.name,
         password_hash=hashed_password,
         role=UserRole.hod,
         department_id=dept.id,
@@ -118,7 +119,7 @@ def list_hods(db: Session = Depends(get_db), current_user: User = Depends(requir
             email=h.email,
             is_active=h.is_active,
             department_id=h.department_id,
-            name=None,
+            name=h.full_name,
             created_at=h.created_at
         ))
     return results
@@ -134,7 +135,7 @@ def get_hod(hod_id: int, db: Session = Depends(get_db), current_user: User = Dep
         email=hod.email,
         is_active=hod.is_active,
         department_id=hod.department_id,
-        name=None,
+        name=hod.full_name,
         created_at=hod.created_at
     )
 
@@ -144,8 +145,14 @@ def update_hod(hod_id: int, request: HODUpdate, db: Session = Depends(get_db), c
     if not hod:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="HOD not found")
         
-    old_data = {"department_id": hod.department_id, "is_active": hod.is_active}
+    old_data = {"department_id": hod.department_id, "is_active": hod.is_active, "email": hod.email}
     
+    if request.email is not None and request.email != hod.email:
+        existing_user = db.query(User).filter(User.email == request.email).first()
+        if existing_user:
+            raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail="User email already exists")
+        hod.email = request.email
+        
     if request.department_id is not None:
         dept = db.query(Department).filter(Department.id == request.department_id).first()
         if not dept:
@@ -155,7 +162,10 @@ def update_hod(hod_id: int, request: HODUpdate, db: Session = Depends(get_db), c
     if request.is_active is not None:
         hod.is_active = request.is_active
         
-    new_data = {"department_id": hod.department_id, "is_active": hod.is_active}
+    if request.name is not None:
+        hod.full_name = request.name
+        
+    new_data = {"department_id": hod.department_id, "is_active": hod.is_active, "name": hod.full_name, "email": hod.email}
     
     log_audit(db, current_user.id, "update_hod", "User", hod.id, old_value=old_data, new_value=new_data)
     db.commit()
@@ -166,7 +176,7 @@ def update_hod(hod_id: int, request: HODUpdate, db: Session = Depends(get_db), c
         email=hod.email,
         is_active=hod.is_active,
         department_id=hod.department_id,
-        name=request.name,
+        name=hod.full_name,
         created_at=hod.created_at
     )
 
@@ -182,3 +192,47 @@ def deactivate_hod(hod_id: int, db: Session = Depends(get_db), current_user: Use
     log_audit(db, current_user.id, "deactivate_hod", "User", hod.id, old_value=old_data, new_value={"is_active": False})
     db.commit()
     return {"message": "HOD deactivated successfully"}
+
+@router.post("/hods/{hod_id}/activate")
+def activate_hod(hod_id: int, db: Session = Depends(get_db), current_user: User = Depends(require_role(UserRole.primary_admin.value))):
+    hod = db.query(User).filter(User.id == hod_id, User.role == UserRole.hod).first()
+    if not hod:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="HOD not found")
+        
+    old_data = {"is_active": hod.is_active}
+    hod.is_active = True
+    
+    log_audit(db, current_user.id, "activate_hod", "User", hod.id, old_value=old_data, new_value={"is_active": True})
+    db.commit()
+    return {"message": "HOD activated successfully"}
+
+@router.delete("/hods/{hod_id}")
+def remove_hod(hod_id: int, db: Session = Depends(get_db), current_user: User = Depends(require_role(UserRole.primary_admin.value))):
+    hod = db.query(User).filter(User.id == hod_id, User.role == UserRole.hod).first()
+    if not hod:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="HOD not found")
+        
+    # Log the audit first before we delete the user
+    log_audit(db, current_user.id, "remove_hod", "User", hod.id, old_value={"email": hod.email, "department_id": hod.department_id}, new_value=None)
+    
+    db.delete(hod)
+    db.commit()
+    return {"message": "HOD permanently removed"}
+
+@router.post("/hods/{hod_id}/reset-password")
+def reset_hod_password(hod_id: int, db: Session = Depends(get_db), current_user: User = Depends(require_role(UserRole.primary_admin.value))):
+    hod = db.query(User).filter(User.id == hod_id, User.role == UserRole.hod).first()
+    if not hod:
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="HOD not found")
+        
+    temp_password = generate_temporary_password()
+    hod.password_hash = get_password_hash(temp_password)
+    hod.must_change_password = True
+    
+    log_audit(db, current_user.id, "reset_hod_password", "User", hod.id, new_value={"must_change_password": True})
+    db.commit()
+    
+    return {
+        "message": "Password reset successfully",
+        "temporary_password": temp_password
+    }

@@ -62,14 +62,13 @@ def test_academics_and_attendance(db_session):
     db_session.commit()
 
     # 8. ClassSession references Timetable
-    session = ClassSession(timetable_id=timetable.id, date=datetime.now(timezone.utc).date(), status=SessionStatus.scheduled)
+    session = ClassSession(teacher_id=user_t.id, department_id=dept.id, semester=5, section="A", timetable_id=timetable.id, date=datetime.now(timezone.utc).date(), status=SessionStatus.submitted)
     db_session.add(session)
     db_session.commit()
 
     # 9. AttendanceRecord references Student and ClassSession
     attendance = AttendanceRecord(
         session_id=session.id, student_id=student.id, subject_id=subject.id,
-        department_id_at_attendance=dept.id, semester_at_attendance=5, section_at_attendance="A",
         status=AttendanceStatus.present, marking_method=MarkingMethod.face_recognition,
         marked_at=datetime.now(timezone.utc)
     )
@@ -80,7 +79,6 @@ def test_academics_and_attendance(db_session):
     # 10. Duplicate attendance for same student/session is rejected
     attendance_dup = AttendanceRecord(
         session_id=session.id, student_id=student.id, subject_id=subject.id,
-        department_id_at_attendance=dept.id, semester_at_attendance=5, section_at_attendance="A",
         status=AttendanceStatus.absent, marking_method=MarkingMethod.manual,
         marked_at=datetime.now(timezone.utc)
     )
@@ -150,13 +148,12 @@ def test_student_transfer_and_others(db_session):
     db_session.add(timetable)
     db_session.commit()
 
-    session = ClassSession(timetable_id=timetable.id, date=datetime.now(timezone.utc).date())
+    session = ClassSession(teacher_id=user_admin.id, department_id=dept1.id, semester=1, section="A", timetable_id=timetable.id, date=datetime.now(timezone.utc).date(), status=SessionStatus.submitted)
     db_session.add(session)
     db_session.commit()
 
     att = AttendanceRecord(
         session_id=session.id, student_id=student.id, subject_id=subject.id,
-        department_id_at_attendance=dept1.id, semester_at_attendance=1, section_at_attendance="A",
         status=AttendanceStatus.absent, marking_method=MarkingMethod.face_recognition,
         marked_at=datetime.now(timezone.utc)
     )

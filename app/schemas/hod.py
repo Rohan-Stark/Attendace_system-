@@ -1,14 +1,15 @@
-from pydantic import BaseModel, EmailStr, ConfigDict
+from pydantic import BaseModel, EmailStr, ConfigDict, Field
 from typing import Optional
 from datetime import datetime
 
 class HODCreate(BaseModel):
     email: EmailStr
-    name: str
+    name: str = Field(..., max_length=150)
     department_id: int
 
 class HODUpdate(BaseModel):
-    name: Optional[str] = None
+    name: Optional[str] = Field(None, max_length=150)
+    email: Optional[EmailStr] = None
     department_id: Optional[int] = None
     is_active: Optional[bool] = None
 

@@ -221,15 +221,15 @@ def test_student_removal_with_attendance(client, setup_departments, db_session):
     db_session.commit()
     
     sess = ClassSession(
+        teacher_id=teacher_prof.user_id, department_id=setup_departments["dept_a"].id, semester=1, section="A",
         timetable_id=tt.id, date=datetime.date.today(),
-        status=SessionStatus.locked
+        status=SessionStatus.submitted
     )
     db_session.add(sess)
     db_session.commit()
     
     att = AttendanceRecord(
         session_id=sess.id, student_id=student_user.student_profile.id, subject_id=sub.id,
-        department_id_at_attendance=setup_departments["dept_a"].id, semester_at_attendance=1, section_at_attendance="A",
         status=AttendanceStatus.present, marking_method=MarkingMethod.manual, marked_at=datetime.datetime.now(datetime.timezone.utc)
     )
     db_session.add(att)

@@ -13,7 +13,7 @@ class ClassSession(TimestampMixin, Base):
     id = Column(Integer, primary_key=True, index=True)
 
     # Phase 7: Direct class context (used when no timetable entry exists)
-    teacher_id = Column(Integer, ForeignKey("users.id"), nullable=False, index=True)
+    teacher_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True, index=True)
     department_id = Column(Integer, ForeignKey("departments.id"), nullable=False, index=True)
     semester = Column(Integer, nullable=False, index=True)
     section = Column(String(10), nullable=False, index=True)

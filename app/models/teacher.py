@@ -6,7 +6,7 @@ class TeacherProfile(TimestampMixin, Base):
     __tablename__ = "teacher_profiles"
 
     id = Column(Integer, primary_key=True, index=True)
-    user_id = Column(Integer, ForeignKey("users.id"), unique=True, nullable=False)
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"), unique=True, nullable=False)
     employee_id = Column(String(50), unique=True, index=True, nullable=False)
     name = Column(String(100), nullable=False)
 

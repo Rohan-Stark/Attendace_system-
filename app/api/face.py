@@ -12,6 +12,40 @@ from app.models.student import StudentProfile
 from app.models.face import FaceEmbedding
 from app.schemas.face import FaceRegistrationResponse, FaceStatusResponse, RecognitionTestResponse, RecognizedFace
 from app.services.face_service import face_service, FaceRecognitionError
+from app.core.rate_limit import RateLimiter
+
+face_register_limiter = RateLimiter(max_requests=5, window_seconds=60)
+face_recognition_limiter = RateLimiter(max_requests=10, window_seconds=60)
+
+MAX_FILE_SIZE = 5 * 1024 * 1024  # 5 MB
+ALLOWED_MIMES = {"image/jpeg", "image/png"}
+
+async def validate_image(file: UploadFile) -> bytes:
+    """
+    Validates an uploaded image file through multiple layers:
+    1. Declared MIME type check
+    2. File size check
+    3. Actual image decode verification (prevents corrupted/fake images)
+    """
+    if file.content_type not in ALLOWED_MIMES:
+        raise HTTPException(status_code=415, detail=f"Unsupported file type: {file.content_type}. Only JPEG/PNG are allowed.")
+    
+    file_bytes = await file.read()
+    if not file_bytes:
+        raise HTTPException(status_code=400, detail="Empty file uploaded.")
+        
+    if len(file_bytes) > MAX_FILE_SIZE:
+        raise HTTPException(status_code=413, detail="File size exceeds the 5MB limit.")
+    
+    # Actual image decode verification — do not trust MIME alone
+    import numpy as np
+    import cv2
+    nparr = np.frombuffer(file_bytes, np.uint8)
+    img = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    if img is None:
+        raise HTTPException(status_code=422, detail="File could not be decoded as a valid image.")
+        
+    return file_bytes
 
 router = APIRouter(prefix="/face", tags=["Face Recognition"])
 logger = logging.getLogger(__name__)
@@ -33,7 +67,7 @@ def get_face_registration_status(
 
     return FaceStatusResponse(face_registered=active_face is not None)
 
-@router.post("/student/register", response_model=FaceRegistrationResponse)
+@router.post("/student/register", response_model=FaceRegistrationResponse, dependencies=[Depends(face_register_limiter)])
 async def register_face(
     frames: List[UploadFile] = File(...),
     current_user: User = Depends(require_role("student")),
@@ -58,7 +92,7 @@ async def register_face(
 
     return await _process_and_save_registration(frames, student_profile, db)
 
-@router.post("/student/reregister", response_model=FaceRegistrationResponse)
+@router.post("/student/reregister", response_model=FaceRegistrationResponse, dependencies=[Depends(face_register_limiter)])
 async def reregister_face(
     frames: List[UploadFile] = File(...),
     current_user: User = Depends(require_role("student")),
@@ -82,10 +116,15 @@ async def _process_and_save_registration(
     if len(frames) < 1:
         raise HTTPException(status_code=400, detail="No frames provided")
         
-    try:
-        frame_bytes_list = [await f.read() for f in frames]
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Failed to read image data: {e}")
+    frame_bytes_list = []
+    for f in frames:
+        try:
+            f_bytes = await validate_image(f)
+            frame_bytes_list.append(f_bytes)
+        except HTTPException as e:
+            raise e
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Failed to read image data: {e}")
 
     try:
         # Generate the stable embedding from frames
@@ -126,7 +165,7 @@ async def _process_and_save_registration(
         message="Face registered successfully."
     )
 
-@router.post("/test-recognition", response_model=RecognitionTestResponse)
+@router.post("/test-recognition", response_model=RecognitionTestResponse, dependencies=[Depends(face_recognition_limiter)])
 async def test_recognition(
     image: UploadFile = File(...),
     current_user: User = Depends(require_role("primary_admin", "hod", "teacher")),
@@ -137,7 +176,9 @@ async def test_recognition(
     Requires staff role.
     """
     try:
-        image_bytes = await image.read()
+        image_bytes = await validate_image(image)
+    except HTTPException as e:
+        raise e
     except Exception:
         raise HTTPException(status_code=400, detail="Failed to read image")
 

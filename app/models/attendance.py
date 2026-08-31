@@ -18,22 +18,16 @@ class AttendanceRecord(TimestampMixin, Base):
     id = Column(Integer, primary_key=True, index=True)
     session_id = Column(Integer, ForeignKey("class_sessions.id"), nullable=False, index=True)
     student_id = Column(Integer, ForeignKey("student_profiles.id"), nullable=False, index=True)
-    subject_id = Column(Integer, ForeignKey("subjects.id"), nullable=False, index=True)
-    
-    # Historical context
-    department_id_at_attendance = Column(Integer, ForeignKey("departments.id"), nullable=False)
-    semester_at_attendance = Column(Integer, nullable=False)
-    section_at_attendance = Column(String(10), nullable=False)
+    subject_id = Column(Integer, ForeignKey("subjects.id"), nullable=True, index=True)
     
     status = Column(Enum(AttendanceStatus), nullable=False)
     marking_method = Column(Enum(MarkingMethod), nullable=False)
-    marked_by = Column(Integer, ForeignKey("users.id"), nullable=True) # Null if system/face_recognition auto-marked
+    marked_by = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True) # Null if system/face_recognition auto-marked
     marked_at = Column(DateTime(timezone=True), nullable=False)
 
     session = relationship("ClassSession", back_populates="attendance_records")
     student = relationship("StudentProfile", back_populates="attendance_records")
     subject = relationship("Subject")
-    department_at_attendance = relationship("Department")
     marker = relationship("User")
     disputes = relationship("AttendanceDispute", back_populates="attendance_record")
 
