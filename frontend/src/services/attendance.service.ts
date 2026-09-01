@@ -45,6 +45,11 @@ export function submitSession(sessionId: number): Promise<AttendanceSession> {
   return post<AttendanceSession>(`/attendance/sessions/${sessionId}/submit`);
 }
 
+/** Terminate the attendance session */
+export function terminateSession(sessionId: number): Promise<AttendanceSession> {
+  return post<AttendanceSession>(`/attendance/sessions/${sessionId}/terminate`);
+}
+
 /** Student: view own attendance history */
 export function getStudentAttendance(): Promise<StudentAttendanceRecord[]> {
   return get<StudentAttendanceRecord[]>('/student/attendance');

@@ -7,10 +7,12 @@ import { Table, Thead, Tbody, Tr, Th, Td } from '../../components/ui/Table';
 import { Modal } from '../../components/ui/Modal';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { ErrorMessage } from '../../components/ui/ErrorMessage';
+import { ConfirmDialog } from '../../components/ui/ConfirmDialog';
 import {
   getSessionDetail,
   updateAttendanceRecord,
   submitSession,
+  terminateSession,
   recognizeFrame,
 } from '../../services/attendance.service';
 import type { AttendanceSessionDetail, AttendanceRecord } from '../../types/api';
@@ -24,6 +26,7 @@ import {
   UserX,
   ScanFace,
   Clock,
+  AlertTriangle,
 } from 'lucide-react';
 
 export function AttendanceSession() {
@@ -34,6 +37,8 @@ export function AttendanceSession() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [terminating, setTerminating] = useState(false);
+  const [showTerminateDialog, setShowTerminateDialog] = useState(false);
   const [togglingId, setTogglingId] = useState<number | null>(null);
 
   // Camera / recognition
@@ -132,6 +137,23 @@ export function AttendanceSession() {
     }
   };
 
+  const handleTerminateSession = async () => {
+    if (!session) return;
+    try {
+      setTerminating(true);
+      setError('');
+      stopCamera();
+      const updated = await terminateSession(session.id);
+      setSession((prev) => (prev ? { ...prev, ...updated } : prev));
+      setShowTerminateDialog(false);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : 'Failed to terminate session';
+      setError(message);
+    } finally {
+      setTerminating(false);
+    }
+  };
+
   const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -205,6 +227,8 @@ export function AttendanceSession() {
   const absentCount = session.records.filter((r) => r.status === 'absent').length;
   const totalCount = session.records.length;
   const isSubmitted = session.status === 'submitted';
+  const isTerminated = session.status === 'terminated';
+  const isActive = session.status === 'active';
 
   return (
     <div className="space-y-6">
@@ -228,9 +252,11 @@ export function AttendanceSession() {
               <p className="text-sm text-slate-500 dark:text-slate-400 mt-1 transition-colors duration-200">{session.date}</p>
             </div>
             <div className="flex items-center gap-2">
-              <Badge variant={isSubmitted ? 'success' : 'info'}>
+              <Badge variant={isSubmitted ? 'success' : isTerminated ? 'danger' : 'info'}>
                 {isSubmitted ? (
                   <span className="flex items-center gap-1"><CheckCircle2 className="w-3 h-3" /> Submitted</span>
+                ) : isTerminated ? (
+                  <span className="flex items-center gap-1"><XCircle className="w-3 h-3" /> Terminated</span>
                 ) : (
                   <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> Active</span>
                 )}
@@ -257,24 +283,36 @@ export function AttendanceSession() {
 
           {/* Actions Row */}
           <div className="flex flex-wrap gap-3">
-            {!showCamera ? (
+            {isActive && !showCamera && (
               <Button variant="outline" onClick={startCamera}>
                 <Camera className="w-4 h-4 mr-2" /> Open Camera
               </Button>
-            ) : (
+            )}
+            {isActive && showCamera && (
               <Button variant="danger" onClick={stopCamera}>
                 <Camera className="w-4 h-4 mr-2" /> Close Camera
               </Button>
             )}
-            {!isSubmitted && (
-              <Button onClick={handleSubmitSession} isLoading={submitting}>
-                <Send className="w-4 h-4 mr-2" /> Submit Attendance
-              </Button>
+            {isActive && (
+              <>
+                <Button onClick={handleSubmitSession} isLoading={submitting}>
+                  <Send className="w-4 h-4 mr-2" /> Submit Attendance
+                </Button>
+                <Button variant="danger" onClick={() => setShowTerminateDialog(true)}>
+                  <AlertTriangle className="w-4 h-4 mr-2" /> Terminate Session
+                </Button>
+              </>
             )}
             {isSubmitted && (
               <p className="text-sm text-emerald-600 dark:text-emerald-400 font-medium flex items-center gap-1 self-center transition-colors duration-200">
                 <CheckCircle2 className="w-4 h-4" />
                 Submitted — modifications allowed until midnight today
+              </p>
+            )}
+            {isTerminated && (
+              <p className="text-sm text-rose-600 dark:text-rose-400 font-medium flex items-center gap-1 self-center transition-colors duration-200">
+                <XCircle className="w-4 h-4" />
+                Session terminated and permanently closed
               </p>
             )}
           </div>
@@ -344,6 +382,19 @@ export function AttendanceSession() {
         </div>
       </Modal>
 
+      {/* Terminate Confirmation Modal */}
+      <ConfirmDialog
+        isOpen={showTerminateDialog}
+        title="Terminate Attendance Session?"
+        message="Are you sure you want to terminate this attendance session? The session will be closed without being submitted as finalized attendance. This action cannot be undone."
+        confirmLabel="Terminate Session"
+        cancelLabel="Cancel"
+        onConfirm={handleTerminateSession}
+        onCancel={() => setShowTerminateDialog(false)}
+        isLoading={terminating}
+        isDestructive={true}
+      />
+
       {/* Attendance Table */}
       {session.records.length > 0 ? (
         <Table>
@@ -393,7 +444,7 @@ export function AttendanceSession() {
                     size="sm"
                     onClick={() => handleToggleStatus(record)}
                     isLoading={togglingId === record.student_id}
-                    disabled={togglingId === record.student_id}
+                    disabled={togglingId === record.student_id || isTerminated}
                   >
                     {record.status === 'present' ? 'Mark Absent' : 'Mark Present'}
                   </Button>

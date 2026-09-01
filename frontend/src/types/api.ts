@@ -190,7 +190,7 @@ export interface AttendanceSession {
   date: string;
   started_at: string | null;
   submitted_at: string | null;
-  status: 'active' | 'submitted';
+  status: 'active' | 'submitted' | 'terminated';
 }
 
 export interface AttendanceRecord {

@@ -7,7 +7,7 @@ import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { ErrorMessage } from '../../components/ui/ErrorMessage';
 import { getTodaySessions, createSession } from '../../services/attendance.service';
 import type { AttendanceSession } from '../../types/api';
-import { ClipboardList, Plus, Clock, CheckCircle2 } from 'lucide-react';
+import { ClipboardList, Plus, Clock, CheckCircle2, XCircle } from 'lucide-react';
 
 export function AttendancePortal() {
   const navigate = useNavigate();
@@ -167,10 +167,14 @@ export function AttendancePortal() {
                     </p>
                     <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 transition-colors duration-200">{session.date}</p>
                   </div>
-                  <Badge variant={session.status === 'submitted' ? 'success' : 'info'}>
+                  <Badge variant={session.status === 'submitted' ? 'success' : session.status === 'terminated' ? 'danger' : 'info'}>
                     {session.status === 'submitted' ? (
                       <span className="flex items-center gap-1">
                         <CheckCircle2 className="w-3 h-3" /> Submitted
+                      </span>
+                    ) : session.status === 'terminated' ? (
+                      <span className="flex items-center gap-1">
+                        <XCircle className="w-3 h-3" /> Terminated
                       </span>
                     ) : (
                       <span className="flex items-center gap-1">

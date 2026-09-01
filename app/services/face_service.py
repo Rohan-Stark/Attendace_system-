@@ -27,11 +27,11 @@ class FaceService:
 
             # Providers are attempted in order. If CUDA is not available, it falls back to CPU.
             providers = ['CUDAExecutionProvider', 'CPUExecutionProvider']
-            self._model = FaceAnalysis(name='buffalo_s', providers=providers)
+            self._model = FaceAnalysis(name='buffalo_l', providers=providers)
             # ctx_id=0 means use the first available context (GPU if available, else CPU)
             self._model.prepare(ctx_id=0, det_size=(640, 640))
             
-            logger.info("InsightFace model 'buffalo_s' loaded successfully.")
+            logger.info("InsightFace model 'buffalo_l' loaded successfully.")
         except Exception as e:
             logger.error(f"Failed to initialize face model: {e}")
             raise FaceRecognitionError(f"Model initialization failed: {e}")
