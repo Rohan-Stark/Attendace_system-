@@ -6,7 +6,9 @@ import { Badge } from '../../components/ui/Badge';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { ErrorMessage } from '../../components/ui/ErrorMessage';
 import { getTodaySessions, createSession } from '../../services/attendance.service';
+import { subjectService } from '../../services/subject.service';
 import type { AttendanceSession } from '../../types/api';
+import type { Subject } from '../../services/subject.service';
 import { ClipboardList, Plus, Clock, CheckCircle2, XCircle } from 'lucide-react';
 
 export function AttendancePortal() {
@@ -20,6 +22,9 @@ export function AttendancePortal() {
   const [showForm, setShowForm] = useState(false);
   const [semester, setSemester] = useState(1);
   const [section, setSection] = useState('A');
+  const [subjectId, setSubjectId] = useState<number | ''>('');
+  const [availableSubjects, setAvailableSubjects] = useState<Subject[]>([]);
+  const [loadingSubjects, setLoadingSubjects] = useState(false);
 
   const fetchSessions = async () => {
     try {
@@ -35,15 +40,44 @@ export function AttendancePortal() {
     }
   };
 
+  const fetchSubjects = async (sem: number) => {
+    try {
+      setLoadingSubjects(true);
+      const data = await subjectService.getAssignedSubjects(sem);
+      setAvailableSubjects(data);
+      if (data.length > 0) {
+        setSubjectId(data[0].id);
+      } else {
+        setSubjectId('');
+      }
+    } catch (err) {
+      console.error('Failed to load subjects', err);
+      setAvailableSubjects([]);
+      setSubjectId('');
+    } finally {
+      setLoadingSubjects(false);
+    }
+  };
+
   useEffect(() => {
     fetchSessions();
   }, []);
 
+  useEffect(() => {
+    if (showForm) {
+      fetchSubjects(semester);
+    }
+  }, [semester, showForm]);
+
   const handleCreateSession = async () => {
+    if (!subjectId) {
+      setError('Please select a subject');
+      return;
+    }
     try {
       setCreating(true);
       setError('');
-      const newSession = await createSession({ semester, section });
+      const newSession = await createSession({ semester, section, subject_id: Number(subjectId) });
       setSessions((prev) => [...prev, newSession]);
       setShowForm(false);
     } catch (err: unknown) {
@@ -119,8 +153,28 @@ export function AttendancePortal() {
                   ))}
                 </select>
               </div>
-              <div className="flex gap-2">
-                <Button onClick={handleCreateSession} isLoading={creating} disabled={creating}>
+              <div>
+                <label htmlFor="subject-select" className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-1 transition-colors duration-200">
+                  Subject {loadingSubjects && <span className="text-xs text-blue-500">(Loading...)</span>}
+                </label>
+                <select
+                  id="subject-select"
+                  value={subjectId}
+                  onChange={(e) => setSubjectId(Number(e.target.value))}
+                  disabled={loadingSubjects || availableSubjects.length === 0}
+                  className="w-full rounded-lg border border-slate-300 dark:border-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white transition-colors duration-200 disabled:opacity-50"
+                >
+                  {availableSubjects.length === 0 ? (
+                    <option value="">No subjects assigned</option>
+                  ) : (
+                    availableSubjects.map((sub) => (
+                      <option key={sub.id} value={sub.id}>{sub.name} ({sub.code})</option>
+                    ))
+                  )}
+                </select>
+              </div>
+              <div className="flex gap-2 sm:col-span-3">
+                <Button onClick={handleCreateSession} isLoading={creating} disabled={creating || !subjectId}>
                   Create Session
                 </Button>
                 <Button variant="ghost" onClick={() => setShowForm(false)}>

@@ -179,6 +179,7 @@ export interface RecognitionTestResponse {
 export interface AttendanceSessionCreate {
   semester: number;
   section: string;
+  subject_id: number;
 }
 
 export interface AttendanceSession {
@@ -187,6 +188,7 @@ export interface AttendanceSession {
   department_id: number;
   semester: number;
   section: string;
+  subject_id: number | null;
   date: string;
   started_at: string | null;
   submitted_at: string | null;
@@ -253,6 +255,9 @@ export interface StudentTrendData {
   date: string;
   status: string;
   session_id: number;
+  subject_name?: string | null;
+  subject_code?: string | null;
+  teacher_name?: string | null;
 }
 
 export interface StudentAnalyticsResponse {

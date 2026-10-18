@@ -25,6 +25,8 @@ import { HodDashboard } from './pages/hod/HodDashboard';
 import { TeacherList } from './pages/hod/TeacherList';
 import { StudentList } from './pages/hod/StudentList';
 import { HodAnalytics } from './pages/hod/HodAnalytics';
+import { SubjectList } from './pages/hod/SubjectList';
+import { AssignmentList } from './pages/hod/AssignmentList';
 
 // Portals
 import { TeacherDashboard } from './pages/teacher/TeacherDashboard';
@@ -74,6 +76,8 @@ function App() {
               <Route path="/hod" element={<HodDashboard />} />
               <Route path="/hod/teachers" element={<TeacherList />} />
               <Route path="/hod/students" element={<StudentList />} />
+              <Route path="/hod/subjects" element={<SubjectList />} />
+              <Route path="/hod/assignments" element={<AssignmentList />} />
               <Route path="/hod/analytics" element={<HodAnalytics />} />
             </Route>
           </Route>

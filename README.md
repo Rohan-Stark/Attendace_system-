@@ -70,17 +70,18 @@ docker-compose up -d
 ```
 
 ## 15. Backend Setup
-```bash
+```powershell
 cd backend
-python -m venv venv
-# Activate venv
-pip install -r requirements.txt
+py -3.12 -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install insightface-0.7.3-cp312-cp312-win_amd64.whl
+python -m pip install -r requirements.txt
 alembic upgrade head
-uvicorn app.main:app --reload
+python -m uvicorn app.main:app --reload
 ```
 
 ## 16. Frontend Setup
-```bash
+```powershell
 cd frontend
 npm install
 npm run dev
@@ -90,7 +91,7 @@ npm run dev
 Access the frontend at `http://localhost:5173`. Access API docs at `http://localhost:8000/docs`.
 
 ## 18. Running Tests
-```bash
+```powershell
 cd backend
 pytest tests/ -v
 ```

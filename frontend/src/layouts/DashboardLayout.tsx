@@ -1,6 +1,6 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { ClipboardList, CalendarDays, ScanFace, BarChart3, LogOut, KeyRound } from 'lucide-react';
+import { ClipboardList, CalendarDays, ScanFace, BarChart3, LogOut, KeyRound, BookOpen } from 'lucide-react';
 import { ThemeToggle } from '../components/ui/ThemeToggle';
 
 interface NavItem {
@@ -31,6 +31,8 @@ export function DashboardLayout() {
       case 'hod':
         return [
           { name: 'Dashboard', href: '/hod', icon: <HomeIcon /> },
+          { name: 'Subjects', href: '/hod/subjects', icon: <BookOpen className="w-5 h-5" /> },
+          { name: 'Assignments', href: '/hod/assignments', icon: <UsersIcon /> },
           { name: 'Teachers', href: '/hod/teachers', icon: <UsersIcon /> },
           { name: 'Students', href: '/hod/students', icon: <AcademicCapIcon /> },
           { name: 'Analytics', href: '/hod/analytics', icon: <BarChart3 className="w-5 h-5" /> },
