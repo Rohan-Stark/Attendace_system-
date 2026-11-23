@@ -1,6 +1,6 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { ClipboardList, CalendarDays, ScanFace, BarChart3, LogOut, KeyRound, BookOpen } from 'lucide-react';
+import { ClipboardList, CalendarDays, ScanFace, BarChart3, LogOut, KeyRound, BookOpen, Mail } from 'lucide-react';
 import { ThemeToggle } from '../components/ui/ThemeToggle';
 
 interface NavItem {
@@ -26,6 +26,7 @@ export function DashboardLayout() {
           { name: 'Dashboard', href: '/admin', icon: <HomeIcon /> },
           { name: 'Departments', href: '/admin/departments', icon: <BuildingIcon /> },
           { name: 'HODs', href: '/admin/hods', icon: <UsersIcon /> },
+          { name: 'Parent Emails', href: '/admin/parent-emails', icon: <Mail className="w-5 h-5" /> },
           { name: 'Analytics', href: '/admin/analytics', icon: <BarChart3 className="w-5 h-5" /> },
         ];
       case 'hod':
@@ -35,6 +36,7 @@ export function DashboardLayout() {
           { name: 'Assignments', href: '/hod/assignments', icon: <UsersIcon /> },
           { name: 'Teachers', href: '/hod/teachers', icon: <UsersIcon /> },
           { name: 'Students', href: '/hod/students', icon: <AcademicCapIcon /> },
+          { name: 'Parent Emails', href: '/hod/parent-emails', icon: <Mail className="w-5 h-5" /> },
           { name: 'Analytics', href: '/hod/analytics', icon: <BarChart3 className="w-5 h-5" /> },
         ];
       case 'teacher':

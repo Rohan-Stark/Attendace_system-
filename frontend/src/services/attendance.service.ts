@@ -54,3 +54,14 @@ export function terminateSession(sessionId: number): Promise<AttendanceSession> 
 export function getStudentAttendance(): Promise<StudentAttendanceRecord[]> {
   return get<StudentAttendanceRecord[]>('/student/attendance');
 }
+
+export interface SectionSummary {
+  section: string;
+  student_count: number;
+  registered_face_count: number;
+}
+
+/** Get active student and registered face counts per section for a semester */
+export function getSectionsSummary(semester: number): Promise<SectionSummary[]> {
+  return get<SectionSummary[]>(`/attendance/sections/summary?semester=${semester}`);
+}

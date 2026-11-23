@@ -1,7 +1,9 @@
-import { get, post, patch } from '../lib/api-client';
+import { get, post, patch, del } from '../lib/api-client';
 import type {
   TeacherResponse, TeacherCreate, TeacherUpdate, TeacherCreationResponse,
   StudentResponse, StudentCreate, StudentUpdate, StudentCreationResponse, StudentTransferRequest,
+  GuardianContact, GuardianContactCreate, GuardianContactUpdate,
+  ParentNotificationListResponse, ParentNotificationItem,
 } from '../types/api';
 
 /* ── Teachers ── */
@@ -59,3 +61,55 @@ export function transferStudent(id: number, data: StudentTransferRequest): Promi
 export function removeStudent(id: number): Promise<{ message: string }> {
   return post<{ message: string }>(`/hod/students/${id}/remove`);
 }
+
+/* ── Guardian Contacts ── */
+
+export function getStudentGuardians(studentId: number): Promise<GuardianContact[]> {
+  return get<GuardianContact[]>(`/hod/students/${studentId}/guardians`);
+}
+
+export function createStudentGuardian(studentId: number, data: GuardianContactCreate): Promise<GuardianContact> {
+  return post<GuardianContact>(`/hod/students/${studentId}/guardians`, data);
+}
+
+export function updateStudentGuardian(
+  studentId: number,
+  guardianId: number,
+  data: GuardianContactUpdate
+): Promise<GuardianContact> {
+  return patch<GuardianContact>(`/hod/students/${studentId}/guardians/${guardianId}`, data);
+}
+
+export function deleteStudentGuardian(studentId: number, guardianId: number): Promise<{ message: string }> {
+  return del<{ message: string }>(`/hod/students/${studentId}/guardians/${guardianId}`);
+}
+
+/* ── Parent Notifications (Department-Scoped) ── */
+
+export function getHodParentNotifications(params?: {
+  state?: string;
+  event_type?: string;
+  attendance_status?: string;
+  usn?: string;
+  session_id?: number;
+  page?: number;
+  page_size?: number;
+}): Promise<ParentNotificationListResponse> {
+  const parts: string[] = [];
+  if (params) {
+    if (params.state) parts.push(`state=${encodeURIComponent(params.state)}`);
+    if (params.event_type) parts.push(`event_type=${encodeURIComponent(params.event_type)}`);
+    if (params.attendance_status) parts.push(`attendance_status=${encodeURIComponent(params.attendance_status)}`);
+    if (params.usn) parts.push(`usn=${encodeURIComponent(params.usn)}`);
+    if (params.session_id) parts.push(`session_id=${params.session_id}`);
+    if (params.page) parts.push(`page=${params.page}`);
+    if (params.page_size) parts.push(`page_size=${params.page_size}`);
+  }
+  const query = parts.length ? `?${parts.join('&')}` : '';
+  return get<ParentNotificationListResponse>(`/hod/parent-notifications${query}`);
+}
+
+export function retryHodParentNotification(notificationId: number): Promise<ParentNotificationItem> {
+  return post<ParentNotificationItem>(`/hod/parent-notifications/${notificationId}/retry`);
+}
+

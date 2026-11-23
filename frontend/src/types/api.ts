@@ -317,3 +317,92 @@ export interface AdminAnalyticsResponse {
   department_stats: DepartmentStats[];
   trend: TrendData[];
 }
+
+/* ── Guardian Contacts & Parent Email Notifications ── */
+
+export interface GuardianContact {
+  id: number;
+  student_id: number;
+  name: string;
+  email: string;
+  relationship: string;
+  is_active: boolean;
+  notifications_enabled: boolean;
+  created_at: string;
+  updated_at?: string | null;
+}
+
+export interface GuardianContactCreate {
+  name: string;
+  email: string;
+  relationship: string;
+  is_active?: boolean;
+  notifications_enabled?: boolean;
+}
+
+export interface GuardianContactUpdate {
+  name?: string;
+  email?: string;
+  relationship?: string;
+  is_active?: boolean;
+  notifications_enabled?: boolean;
+}
+
+export interface EmailConfigurationStatus {
+  enabled: boolean;
+  provider: string;
+  provider_configured: boolean;
+  configuration_problem?: string | null;
+  simulated: boolean;
+}
+
+export type ParentNotificationState =
+  | 'pending'
+  | 'sending'
+  | 'simulated'
+  | 'sent'
+  | 'failed'
+  | 'skipped';
+
+export interface ParentNotificationItem {
+  id: number;
+  session_id: number;
+  student_id: number;
+  student_usn: string | null;
+  student_name: string | null;
+  department_id: number | null;
+  department_name: string | null;
+  subject_code: string | null;
+  subject_name: string | null;
+  session_date: string | null;
+  semester: number | null;
+  section: string | null;
+  guardian_contact_id: number | null;
+  recipient_email: string;
+  recipient_email_masked: string;
+  recipient_name: string | null;
+  attendance_status: 'present' | 'absent' | string;
+  event_type: 'initial' | 'correction' | string;
+  state: ParentNotificationState;
+  email_subject: string;
+  provider: string | null;
+  provider_message_id: string | null;
+  attempt_count: number;
+  last_error: string | null;
+  retryable: boolean;
+  can_retry: boolean;
+  first_attempt_at: string | null;
+  last_attempt_at: string | null;
+  next_attempt_at: string | null;
+  sent_at: string | null;
+  created_at: string;
+}
+
+export interface ParentNotificationListResponse {
+  items: ParentNotificationItem[];
+  total: number;
+  page: number;
+  page_size: number;
+  email_config: EmailConfigurationStatus;
+}
+

@@ -190,11 +190,16 @@ export function AttendanceSession() {
     const video = videoRef.current;
     const canvas = canvasRef.current;
 
+    if (!video.videoWidth || !video.videoHeight) {
+      setError('Camera feed is still initializing. Please wait a moment and try again.');
+      return;
+    }
+
     canvas.width = video.videoWidth;
     canvas.height = video.videoHeight;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    ctx.drawImage(video, 0, 0);
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
     canvas.toBlob(async (blob) => {
       if (!blob) return;
@@ -281,6 +286,13 @@ export function AttendanceSession() {
             </div>
           </div>
 
+          {totalCount === 0 && (
+            <div className="mb-4 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3 text-sm text-amber-800 dark:text-amber-300">
+              No students are enrolled in <strong>Semester {session.semester} — Section {session.section}</strong>.
+              Face recognition only matches students enrolled in this session&apos;s semester and section.
+            </div>
+          )}
+
           {/* Actions Row */}
           <div className="flex flex-wrap gap-3">
             {isActive && !showCamera && (
@@ -322,6 +334,7 @@ export function AttendanceSession() {
       {/* Camera Modal */}
       <Modal isOpen={showCamera} onClose={stopCamera} title="Face Recognition Camera">
         <div className="space-y-4">
+          {error && <ErrorMessage message={error} />}
           <div className="relative bg-black rounded-lg overflow-hidden aspect-video">
             <video
               ref={videoRef}

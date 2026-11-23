@@ -5,7 +5,7 @@ import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { LoadingSpinner } from '../../components/ui/LoadingSpinner';
 import { ErrorMessage } from '../../components/ui/ErrorMessage';
-import { getTodaySessions, createSession } from '../../services/attendance.service';
+import { getTodaySessions, createSession, getSectionsSummary, type SectionSummary } from '../../services/attendance.service';
 import { subjectService } from '../../services/subject.service';
 import type { AttendanceSession } from '../../types/api';
 import type { Subject } from '../../services/subject.service';
@@ -24,6 +24,7 @@ export function AttendancePortal() {
   const [section, setSection] = useState('A');
   const [subjectId, setSubjectId] = useState<number | ''>('');
   const [availableSubjects, setAvailableSubjects] = useState<Subject[]>([]);
+  const [sectionSummaries, setSectionSummaries] = useState<SectionSummary[]>([]);
   const [loadingSubjects, setLoadingSubjects] = useState(false);
 
   const fetchSessions = async () => {
@@ -40,15 +41,26 @@ export function AttendancePortal() {
     }
   };
 
-  const fetchSubjects = async (sem: number) => {
+  const fetchSubjectsAndSections = async (sem: number) => {
     try {
       setLoadingSubjects(true);
-      const data = await subjectService.getAssignedSubjects(sem);
-      setAvailableSubjects(data);
-      if (data.length > 0) {
-        setSubjectId(data[0].id);
+      const [subjectsData, sectionsData] = await Promise.all([
+        subjectService.getAssignedSubjects(sem),
+        getSectionsSummary(sem).catch(() => [] as SectionSummary[]),
+      ]);
+      setAvailableSubjects(subjectsData);
+      if (subjectsData.length > 0) {
+        setSubjectId(subjectsData[0].id);
       } else {
         setSubjectId('');
+      }
+      setSectionSummaries(sectionsData);
+      if (sectionsData.length > 0) {
+        const currentSecInfo = sectionsData.find((s) => s.section === section);
+        const firstPopulated = sectionsData.find((s) => s.student_count > 0);
+        if ((!currentSecInfo || currentSecInfo.student_count === 0) && firstPopulated) {
+          setSection(firstPopulated.section);
+        }
       }
     } catch (err) {
       console.error('Failed to load subjects', err);
@@ -61,11 +73,20 @@ export function AttendancePortal() {
 
   useEffect(() => {
     fetchSessions();
+    // Pre-detect the teacher's first assigned semester so opening "New Session" defaults to their active semester
+    subjectService
+      .getAssignedSubjects()
+      .then((allAssigned) => {
+        if (allAssigned.length > 0) {
+          setSemester(allAssigned[0].semester);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
     if (showForm) {
-      fetchSubjects(semester);
+      fetchSubjectsAndSections(semester);
     }
   }, [semester, showForm]);
 
@@ -148,8 +169,14 @@ export function AttendancePortal() {
                   onChange={(e) => setSection(e.target.value)}
                   className="w-full rounded-lg border border-slate-300 dark:border-slate-700 px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 bg-white dark:bg-slate-900 text-slate-900 dark:text-white transition-colors duration-200"
                 >
-                  {['A', 'B', 'C', 'D'].map((s) => (
-                    <option key={s} value={s}>Section {s}</option>
+                  {(sectionSummaries.length > 0
+                    ? sectionSummaries
+                    : ['A', 'B', 'C', 'D'].map((s) => ({ section: s, student_count: -1, registered_face_count: 0 }))
+                  ).map((item) => (
+                    <option key={item.section} value={item.section}>
+                      Section {item.section}
+                      {item.student_count >= 0 ? ` (${item.student_count} student${item.student_count === 1 ? '' : 's'})` : ''}
+                    </option>
                   ))}
                 </select>
               </div>

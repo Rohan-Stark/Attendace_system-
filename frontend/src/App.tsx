@@ -27,6 +27,7 @@ import { StudentList } from './pages/hod/StudentList';
 import { HodAnalytics } from './pages/hod/HodAnalytics';
 import { SubjectList } from './pages/hod/SubjectList';
 import { AssignmentList } from './pages/hod/AssignmentList';
+import { ParentNotificationsPage } from './pages/hod/ParentNotificationsPage';
 
 // Portals
 import { TeacherDashboard } from './pages/teacher/TeacherDashboard';
@@ -65,6 +66,7 @@ function App() {
               <Route path="/admin" element={<AdminDashboard />} />
               <Route path="/admin/departments" element={<DepartmentList />} />
               <Route path="/admin/hods" element={<HodList />} />
+              <Route path="/admin/parent-emails" element={<ParentNotificationsPage mode="admin" />} />
               <Route path="/admin/analytics" element={<AdminAnalytics />} />
               <Route path="/admin/test-face" element={<FaceRecognitionTest />} />
             </Route>
@@ -78,6 +80,7 @@ function App() {
               <Route path="/hod/students" element={<StudentList />} />
               <Route path="/hod/subjects" element={<SubjectList />} />
               <Route path="/hod/assignments" element={<AssignmentList />} />
+              <Route path="/hod/parent-emails" element={<ParentNotificationsPage mode="hod" />} />
               <Route path="/hod/analytics" element={<HodAnalytics />} />
             </Route>
           </Route>
